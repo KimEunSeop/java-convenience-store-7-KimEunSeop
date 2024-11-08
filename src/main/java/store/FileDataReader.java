@@ -17,7 +17,7 @@ public class FileDataReader {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 Promotion promotion = parsePromotion(line);
-                promotionRepository.save(promotion);
+                promotionRepository.add(promotion);
             }
         }
     }

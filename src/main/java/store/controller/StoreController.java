@@ -22,8 +22,8 @@ public class StoreController {
     private void set() {
         FileDataReader fileDataReader = new FileDataReader();
         try {
-            fileDataReader.loadPromotions("promotions.md", promotionRepository);
-            fileDataReader.loadProducts("products.md", productRepository, promotionRepository);
+            fileDataReader.loadPromotions("src/main/resources/promotions.md", promotionRepository);
+            fileDataReader.loadProducts("src/main/resources/products.md", productRepository, promotionRepository);
 
         } catch (IOException e) {
             e.printStackTrace();

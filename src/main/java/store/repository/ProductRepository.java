@@ -23,10 +23,9 @@ public class ProductRepository {
     public List<String> getProductsAsString() {
         List<String> productStrings = new ArrayList<>();
         for (Product product : products) {
-            String promotionName;
-            promotionName = product.getPromotion().getName();
-            if (product.getPromotion() == null) {
-                promotionName = "재고없음";
+            String promotionName = "재고없음";
+            if (product.getPromotion() != null) {
+                promotionName = product.getPromotion().getName();
             }
             String productString = String.format("%s %,d원 %d개 %s",
                     product.getName(), product.getPrice(), product.getQuantity(), promotionName);

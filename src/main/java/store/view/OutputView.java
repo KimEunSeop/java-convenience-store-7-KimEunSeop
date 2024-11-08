@@ -8,8 +8,10 @@ public class OutputView {
     }
 
     public void printItemList(List<String> items) {
+        System.out.println("현재 보유하고 있는 상품입니다.");
+        System.out.println();
         for(String item : items){
-            System.out.println("- ");
+            System.out.print("- ");
             System.out.println(item);
         }
     }
