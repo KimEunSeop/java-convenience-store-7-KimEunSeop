@@ -3,6 +3,7 @@ package store.controller;
 import store.FileDataReader;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
+import store.view.InputView;
 import store.view.OutputView;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public class StoreController {
     final OutputView outputView = new OutputView();
+    final InputView inputView = new InputView();
     final PromotionRepository promotionRepository = new PromotionRepository();
     final ProductRepository productRepository = new ProductRepository();
 
@@ -17,6 +19,8 @@ public class StoreController {
         set();
         outputView.printWelcomeGuide();
         outputView.printItemList(productRepository.getProductsAsString());
+        outputView.printPurchaseGuide();
+        inputView.getResponse();
     }
 
     private void set() {

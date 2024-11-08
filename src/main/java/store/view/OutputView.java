@@ -14,5 +14,10 @@ public class OutputView {
             System.out.print("- ");
             System.out.println(item);
         }
+        System.out.println();
+    }
+
+    public void printPurchaseGuide() {
+        System.out.println("구매하실 상품명과 수량을 입력해 주세요. (예 : [사이다-2],[감자칩-1])");
     }
 }
