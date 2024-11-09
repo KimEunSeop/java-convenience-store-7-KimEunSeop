@@ -20,6 +20,8 @@ public class ShoppingCart {
         for (String item : items) {
             validateInputFormat(item);
             String[] parsedItem = parse(item);
+            validateExistence(parsedItem[0]);
+            validateQuantity(parsedItem[0], Integer.parseInt(parsedItem[1]));
             addProduct(parsedItem[0], Integer.parseInt(parsedItem[1]));
         }
     }
@@ -31,9 +33,7 @@ public class ShoppingCart {
         return split;
     }
 
-    private void addProduct(String name, int quantity) {
-        validateExistence(name);
-        validateQuantity(name, quantity);
+    public void addProduct(String name, int quantity) {
         Product product = productRepository.findByName(name);
         products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
     }

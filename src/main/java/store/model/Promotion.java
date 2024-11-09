@@ -18,4 +18,20 @@ public class Promotion {
     public String getName() {
         return name;
     }
+
+    public int getBuyCount() {
+        return buyCount;
+    }
+
+    public int getGetCount() {
+        return getCount;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
 }

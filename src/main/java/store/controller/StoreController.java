@@ -1,6 +1,7 @@
 package store.controller;
 
 import store.FileDataReader;
+import store.PromotionChecker;
 import store.ShoppingCart;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
@@ -8,18 +9,26 @@ import store.view.InputView;
 import store.view.OutputView;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class StoreController {
-    final OutputView outputView = new OutputView();
-    final InputView inputView = new InputView();
-    final PromotionRepository promotionRepository = new PromotionRepository();
-    final ProductRepository productRepository = new ProductRepository();
+    public static final int EMPTY = 0;
+    private final OutputView outputView = new OutputView();
+    private final InputView inputView = new InputView();
+    private final PromotionRepository promotionRepository = new PromotionRepository();
+    private final ProductRepository productRepository = new ProductRepository();
+    private ShoppingCart shoppingCart;
+    PromotionChecker promotionChecker;
 
     public void start() {
         set();
         outputView.printWelcomeGuide();
         outputView.printItemList(productRepository.getProductsAsString());
         process(this::inputShoppingCart);
+        promotionChecker = new PromotionChecker(shoppingCart);
+        if(promotionChecker.findMissedItems().size() != EMPTY) {
+            process(this::inputMissedItem);
+        }
     }
 
     private void set() {
@@ -35,7 +44,21 @@ public class StoreController {
     private void inputShoppingCart() {
         try {
             outputView.printPurchaseGuide();
-            ShoppingCart shoppingCart = new ShoppingCart(inputView.getResponse(), productRepository);
+            shoppingCart = new ShoppingCart(inputView.getResponse(), productRepository);
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e.getMessage());
+            process(this::inputShoppingCart);
+        }
+    }
+
+    private void inputMissedItem() {
+        try {
+            Map<String, Integer> missedItems = promotionChecker.findMissedItems();
+            for (String key : missedItems.keySet()) {
+                outputView.printGetMissedItemGuide(key, missedItems.get(key));
+                outputView.printYOrN();
+            }
+            promotionChecker.checkResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputShoppingCart);
