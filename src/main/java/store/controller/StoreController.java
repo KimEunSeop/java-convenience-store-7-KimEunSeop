@@ -27,10 +27,15 @@ public class StoreController {
         outputView.printItemList(productRepository.getProductsAsString());
         process(this::inputShoppingCart);
         promotionChecker = new PromotionChecker(shoppingCart);
-        if(promotionChecker.findMissedItems().size() != EMPTY) {
+        if (promotionChecker.findMissedItems().size() != EMPTY) {
             process(this::inputMissedItem);
         }
+        if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
+            process(this::inputExclude);
+        }
+
     }
+
 
     private void set() {
         FileDataReader fileDataReader = new FileDataReader();
@@ -59,10 +64,24 @@ public class StoreController {
                 outputView.printGetMissedItemGuide(key, missedItems.get(key));
                 outputView.printYOrN();
             }
-            promotionChecker.checkResponse(inputView.getResponse());
+            promotionChecker.checkMissedItemsResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputShoppingCart);
+        }
+    }
+
+    private void inputExclude() {
+        try {
+            Map<String, Integer> exceedItems = promotionChecker.checkPromotionQuantity(productRepository);
+            for (String key : exceedItems.keySet()) {
+                outputView.printExcludeGuide(key, exceedItems.get(key));
+                outputView.printYOrN();
+            }
+            promotionChecker.checkExceedItemsResponse(inputView.getResponse());
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e.getMessage());
+            process(this::inputExclude);
         }
     }
 

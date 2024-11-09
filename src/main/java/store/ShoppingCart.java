@@ -47,6 +47,20 @@ public class ShoppingCart {
         }
     }
 
+    public void changeProduct(String name, Integer exceedQuantity) {
+        for (Product product : promotionProducts) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() - exceedQuantity);
+            }
+        }
+
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() + exceedQuantity);
+            }
+        }
+    }
+
     private boolean hasProduct(String name, int quantity) {
         for (Product product : promotionProducts) {
             if (product.getName().equals(name)) {
@@ -62,10 +76,6 @@ public class ShoppingCart {
             }
         }
         return false;
-    }
-
-    private static boolean isNotPromotion(List<Product> product) {
-        return product.size() > 1;
     }
 
     private void validateInputFormat(String item) {
@@ -97,5 +107,9 @@ public class ShoppingCart {
 
     public List<Product> getPromotionProducts() {
         return promotionProducts;
+    }
+
+    public ProductRepository getProductRepository() {
+        return productRepository;
     }
 }

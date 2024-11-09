@@ -30,6 +30,10 @@ public class OutputView {
     }
 
     public void printYOrN() {
-        System.out.println("(Y/N)");
+        System.out.println(" (Y/N)");
+    }
+
+    public void printExcludeGuide(String productName, Integer exceedQuantity) {
+        System.out.println("현재 " + productName + " " + exceedQuantity + "개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까?");
     }
 }
