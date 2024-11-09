@@ -8,17 +8,16 @@ import store.repository.PromotionRepository;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class FileDataReader {
 
     public static void loadPromotions(String filename, PromotionRepository promotionRepository) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             bufferedReader.readLine();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                Promotion promotion = parsePromotion(line);
-                promotionRepository.add(promotion);
-            }
+            bufferedReader.lines().map(FileDataReader::parsePromotion).
+                    filter(FileDataReader::isPromotionActive).forEach(promotionRepository::add);
         }
     }
 
@@ -31,6 +30,15 @@ public class FileDataReader {
                 fields[3].trim(),
                 fields[4].trim()
         );
+    }
+
+    private static boolean isPromotionActive(Promotion promotion) {
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate startDate = LocalDate.parse(promotion.getStartDate(), formatter);
+        LocalDate endDate = LocalDate.parse(promotion.getEndDate(), formatter);
+
+        return !currentDate.isBefore(startDate) && !currentDate.isAfter(endDate);
     }
 
     public static void loadProducts(
