@@ -19,7 +19,7 @@ public class PromotionChecker {
     }
 
     public Map<String, Integer> findMissedItems() {
-        for (Product product : shoppingCart.getProducts()) {
+        for (Product product : shoppingCart.getPromotionProducts()) {
             checkMissed(product);
         }
 
@@ -27,11 +27,9 @@ public class PromotionChecker {
     }
 
     private void checkMissed(Product product) {
-        if (product.getPromotion() != null) {
-            int missedItemCount = calculateMissedItemCount(product.getQuantity(), product.getPromotion());
-            if (missedItemCount > 0) {
-                missedItems.put(product.getName(), missedItemCount);
-            }
+        int missedItemCount = calculateMissedItemCount(product.getQuantity(), product.getPromotion());
+        if (missedItemCount > 0) {
+            missedItems.put(product.getName(), missedItemCount);
         }
     }
 

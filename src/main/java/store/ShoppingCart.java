@@ -8,6 +8,7 @@ import java.util.List;
 
 public class ShoppingCart {
     private List<Product> products = new ArrayList<>();
+    private List<Product> promotionProducts = new ArrayList<>();
     private final ProductRepository productRepository;
 
     public ShoppingCart(String input, ProductRepository productRepository) {
@@ -34,15 +35,37 @@ public class ShoppingCart {
     }
 
     public void addProduct(String name, int quantity) {
-        for (Product product : products) {
+        if (hasProduct(name, quantity)) return;
+
+        List<Product> inputProducts = productRepository.findByName(name);
+
+        for (Product product : inputProducts) {
+            if (product.getPromotion() != null) {
+                promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+            }
+            products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+        }
+    }
+
+    private boolean hasProduct(String name, int quantity) {
+        for (Product product : promotionProducts) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + quantity);
-                return;
+                return true;
             }
         }
 
-        Product product = productRepository.findByName(name);
-        products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() + quantity);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isNotPromotion(List<Product> product) {
+        return product.size() > 1;
     }
 
     private void validateInputFormat(String item) {
@@ -58,13 +81,21 @@ public class ShoppingCart {
     }
 
     private void validateQuantity(String name, int quantity) {
-        Product product = productRepository.findByName(name);
-        if (quantity > product.getQuantity()) {
+        int totalquantity = 0;
+        for (Product product : productRepository.findByName(name)) {
+            totalquantity += product.getQuantity();
+        }
+
+        if (quantity > totalquantity) {
             throw new IllegalArgumentException("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
         }
     }
 
     public List<Product> getProducts() {
         return products;
+    }
+
+    public List<Product> getPromotionProducts() {
+        return promotionProducts;
     }
 }

@@ -69,8 +69,8 @@ class FileDataReaderTest {
     @Test
     void 파일에서_읽어올_때_제품이_저장된다() throws IOException {
         fileDataReader.loadProducts(productFile.getAbsolutePath(), productRepository, promotionRepository);
-        Product product1 = productRepository.findByName("콜라");
-        Product product2 = productRepository.findByName("사이다");
+        Product product1 = productRepository.findByName("콜라").getFirst();
+        Product product2 = productRepository.findByName("사이다").getFirst();
         assertNotNull(product1);
         assertNotNull(product2);
         assertEquals("콜라", product1.getName());
