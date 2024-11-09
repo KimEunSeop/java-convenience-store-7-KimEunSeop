@@ -1,6 +1,7 @@
 package store.controller;
 
 import store.FileDataReader;
+import store.ShoppingCart;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
 import store.view.InputView;
@@ -20,7 +21,7 @@ public class StoreController {
         outputView.printWelcomeGuide();
         outputView.printItemList(productRepository.getProductsAsString());
         outputView.printPurchaseGuide();
-        inputView.getResponse();
+        ShoppingCart shoppingCart = new ShoppingCart(inputView.getResponse(), productRepository);
     }
 
     private void set() {
@@ -28,7 +29,6 @@ public class StoreController {
         try {
             fileDataReader.loadPromotions("src/main/resources/promotions.md", promotionRepository);
             fileDataReader.loadProducts("src/main/resources/products.md", productRepository, promotionRepository);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
