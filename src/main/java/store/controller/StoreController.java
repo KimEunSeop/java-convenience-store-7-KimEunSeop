@@ -8,7 +8,6 @@ import store.view.InputView;
 import store.view.OutputView;
 
 import java.io.IOException;
-import java.util.List;
 
 public class StoreController {
     final OutputView outputView = new OutputView();
@@ -20,8 +19,7 @@ public class StoreController {
         set();
         outputView.printWelcomeGuide();
         outputView.printItemList(productRepository.getProductsAsString());
-        outputView.printPurchaseGuide();
-        ShoppingCart shoppingCart = new ShoppingCart(inputView.getResponse(), productRepository);
+        process(this::inputShoppingCart);
     }
 
     private void set() {
@@ -31,6 +29,25 @@ public class StoreController {
             fileDataReader.loadProducts("src/main/resources/products.md", productRepository, promotionRepository);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void inputShoppingCart() {
+        try {
+            outputView.printPurchaseGuide();
+            ShoppingCart shoppingCart = new ShoppingCart(inputView.getResponse(), productRepository);
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e.getMessage());
+            process(this::inputShoppingCart);
+        }
+    }
+
+    private void process(Runnable action) {
+        try {
+            action.run();
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e.getMessage());
+            process(action);
         }
     }
 }
