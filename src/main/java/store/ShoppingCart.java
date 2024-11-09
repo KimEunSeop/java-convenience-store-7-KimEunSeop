@@ -34,6 +34,14 @@ public class ShoppingCart {
     }
 
     public void addProduct(String name, int quantity) {
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() + quantity);
+                System.out.println(product.getQuantity());
+                return;
+            }
+        }
+
         Product product = productRepository.findByName(name);
         products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
     }
