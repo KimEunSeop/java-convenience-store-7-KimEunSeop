@@ -23,7 +23,7 @@ public class ProductRepository {
     public List<String> getProductsAsString() {
         List<String> productStrings = new ArrayList<>();
         for (Product product : products) {
-            String promotionName = "재고없음";
+            String promotionName = "";
             if (product.getPromotion() != null) {
                 promotionName = product.getPromotion().getName();
             }

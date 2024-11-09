@@ -15,10 +15,25 @@ public class FileDataReader {
 
     public static void loadPromotions(String filename, PromotionRepository promotionRepository) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
-            bufferedReader.readLine();
-            bufferedReader.lines().map(FileDataReader::parsePromotion).
-                    filter(FileDataReader::isPromotionActive).forEach(promotionRepository::add);
+            bufferedReader.readLine(); // 헤더 라인 건너뛰기
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                Promotion promotion = parsePromotion(line);
+                if (isPromotionValid(promotion)) {
+                    promotionRepository.add(promotion);
+                }
+            }
         }
+    }
+
+    private static boolean isPromotionValid(Promotion promotion) {
+        if (promotion == null) {
+            return false;
+        }
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = LocalDate.parse(promotion.getStartDate(), DateTimeFormatter.ISO_DATE);
+        LocalDate endDate = LocalDate.parse(promotion.getEndDate(), DateTimeFormatter.ISO_DATE);
+        return !(today.isBefore(startDate) || today.isAfter(endDate));
     }
 
     private static Promotion parsePromotion(String line) {
@@ -32,20 +47,11 @@ public class FileDataReader {
         );
     }
 
-    private static boolean isPromotionActive(Promotion promotion) {
-        LocalDate currentDate = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate startDate = LocalDate.parse(promotion.getStartDate(), formatter);
-        LocalDate endDate = LocalDate.parse(promotion.getEndDate(), formatter);
-
-        return !currentDate.isBefore(startDate) && !currentDate.isAfter(endDate);
-    }
-
     public static void loadProducts(
             String filename, ProductRepository productRepository, PromotionRepository promotionRepository
     ) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            br.readLine();
+            br.readLine(); // 헤더 라인 건너뛰기
             String line;
             while ((line = br.readLine()) != null) {
                 Product product = parseProduct(line, promotionRepository);
@@ -64,12 +70,11 @@ public class FileDataReader {
         return new Product(name, price, quantity, promotion);
     }
 
-
     private static Promotion findPromotion(String promotionName, PromotionRepository promotionRepository) {
         if (promotionName != null && !promotionName.isEmpty()) {
             return promotionRepository.findByName(promotionName);
         } else {
-            return null;
+            return null; // 프로모션이 없는 경우 null을 반환
         }
     }
 }

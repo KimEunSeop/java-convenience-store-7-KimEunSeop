@@ -37,7 +37,6 @@ public class ShoppingCart {
         for (Product product : products) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + quantity);
-                System.out.println(product.getQuantity());
                 return;
             }
         }
