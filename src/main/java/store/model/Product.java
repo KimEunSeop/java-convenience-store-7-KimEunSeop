@@ -25,12 +25,7 @@ public class Product {
     public Promotion getPromotion() {
         return promotion;
     }
-
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public void setSoldOut() {
-        this.promotion = new Promotion("재고 없음", 0, 0, null, null);
     }
 }

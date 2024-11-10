@@ -53,13 +53,17 @@ public class OutputView {
             printFreeItems(freeItems);
         }
 
-        printFinalAmount(totalPrice, promotionDiscount, membershipDiscount, finalPrice);
+        int totalQuantity = calculateTotalQuantity(products);
+        printFinalAmount(totalPrice, promotionDiscount, membershipDiscount, finalPrice, totalQuantity);
     }
 
     private void printProductList(List<Product> products) {
         System.out.printf("%-10s\t%-6s\t%-10s\n", "상품명", "수량", "금액");
         for (Product product : products) {
-            System.out.printf("%-10s\t%-6d\t%-10d\n", product.getName(), product.getQuantity(), product.getPrice() * product.getQuantity());
+            System.out.printf("%-10s\t%-6d\t%-10s\n",
+                    product.getName(),
+                    product.getQuantity(),
+                    String.format("%,d", product.getPrice() * product.getQuantity()));
         }
     }
 
@@ -71,15 +75,19 @@ public class OutputView {
         }
     }
 
-    private void printFinalAmount(int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
+    private void printFinalAmount(int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice, int totalQuantity) {
         System.out.println("====================================");
-        System.out.printf("%-10s\t%-6d\t%-10d\n", "총 구매액", totalAmount, totalAmount);
-        System.out.printf("%-10s\t%-6d\t%-10d\n", "행사 할인", -promotionDiscount, -promotionDiscount);
-        System.out.printf("%-10s\t%-6d\t%-10d\n", "멤버십 할인", -membershipDiscount, -membershipDiscount);
-        System.out.printf("%-10s\t%-6d\t%-10d\n", "내실 돈", finalAmount, finalAmount);
+        System.out.printf("%-12s\t%-6d\t%5s\n", "총구매액", totalQuantity, String.format("%,d", totalPrice));
+        System.out.printf("%-12s\t%14s\n", "행사할인", String.format("%,d", -promotionDiscount));
+        System.out.printf("%-12s\t%14s\n", "멤버십할인", String.format("%,d", -membershipDiscount));
+        System.out.printf("%-12s\t%14s\n", "내실돈", String.format("%,d", finalPrice));
     }
 
-    public void printFinsihGuide() {
+    public void printFinishGuide() {
         System.out.println("감사합니다. 구매하고 싶은 다른 상품이 있나요?");
+    }
+
+    private int calculateTotalQuantity(List<Product> products) {
+        return products.stream().mapToInt(Product::getQuantity).sum();
     }
 }

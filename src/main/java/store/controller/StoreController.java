@@ -53,7 +53,7 @@ public class StoreController {
     private boolean checkPurchaseAdditional() {
         while(true){
             try {
-                outputView.printFinsihGuide();
+                outputView.printFinishGuide();
                 outputView.printYOrN();
                 return checkInput();
             } catch (IllegalArgumentException e) {

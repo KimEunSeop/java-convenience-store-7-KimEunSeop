@@ -40,15 +40,37 @@ public class ProductRepository {
     public List<String> getProductsAsString() {
         List<String> productStrings = new ArrayList<>();
         for (Product product : products) {
-            String promotionName = "";
-            if (product.getPromotion() != null) {
-                promotionName = product.getPromotion().getName();
-            }
-            String productString = String.format("%s %,d원 %d개 %s",
-                    product.getName(), product.getPrice(), product.getQuantity(), promotionName);
+            String productString = makeString(product);
             productStrings.add(productString);
         }
         return productStrings;
+    }
+
+    private static String makeString(Product product) {
+        String promotionName = setPromotionName(product);
+        String quantityString = checkEmpty(product);
+        String productString = String.format("%s %,d원 %s %s",
+                product.getName(), product.getPrice(), quantityString, promotionName);
+        return productString;
+    }
+
+    private static String setPromotionName(Product product) {
+        String promotionName = "";
+        if (product.getPromotion() != null) {
+            promotionName = product.getPromotion().getName();
+        }
+        return promotionName;
+    }
+
+    private static String checkEmpty(Product product) {
+        String quantityString = "";
+        if (product.getQuantity() == 0) {
+            quantityString = "재고 없음";
+        }
+        if (product.getQuantity() != 0) {
+            quantityString = String.format("%d개", product.getQuantity());
+        }
+        return quantityString;
     }
 
     public int findPromotionProductStockByName(String name) {
