@@ -1,10 +1,13 @@
 package store;
 
 import store.model.Product;
+import store.model.Promotion;
 import store.repository.ProductRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShoppingCart {
     private List<Product> products = new ArrayList<>();
@@ -40,6 +43,9 @@ public class ShoppingCart {
         List<Product> inputProducts = productRepository.findByName(name);
 
         for (Product product : inputProducts) {
+            if(product.getPromotion().getName() != Promotion.SOLD_OUT){
+                continue;
+            }
             if (product.getPromotion() != null) {
                 promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
                 break;
@@ -138,10 +144,6 @@ public class ShoppingCart {
         return promotionProducts;
     }
 
-    public ProductRepository getProductRepository() {
-        return productRepository;
-    }
-
     public List<Product> getAllProducts() {
         List<Product> totalProducts = new ArrayList<>();
 
@@ -171,5 +173,31 @@ public class ShoppingCart {
             }
         }
         totalProducts.add(new Product(promotionProduct.getName(), promotionProduct.getPrice(), promotionProduct.getQuantity(), null));
+    }
+
+    public void buy() {
+        List<Product> allProducts = productRepository.getProducts();
+
+        Map<String, Product> productMap = new HashMap<>();
+        for (Product repoProduct : allProducts) {
+            productMap.put(repoProduct.getName(), repoProduct);
+        }
+
+        deductProductQuantity(productMap, products);
+        deductProductQuantity(productMap, promotionProducts);
+    }
+
+    private void deductProductQuantity(Map<String, Product> productMap, List<Product> products) {
+        for (Product product : products) {
+            Product repositoryProduct = productMap.get(product.getName());
+
+            if (repositoryProduct != null) {
+                int newQuantity = repositoryProduct.getQuantity() - product.getQuantity();
+                repositoryProduct.setQuantity(newQuantity);
+                if (newQuantity == 0) {
+                    repositoryProduct.setSoldOut();
+                }
+            }
+        }
     }
 }

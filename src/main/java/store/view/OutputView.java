@@ -44,7 +44,7 @@ public class OutputView {
         System.out.println("멤버십 할인을 받으시겠습니까?");
     }
 
-    public void printReceipt(Map<String, Integer> freeItems, List<Product> products, int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
+    public void printReceipt(Map<String, Integer> freeItems, List<Product> products, int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice) {
         System.out.println("==============W 편의점================");
         printProductList(products);
 
@@ -53,7 +53,7 @@ public class OutputView {
             printFreeItems(freeItems);
         }
 
-        printFinalAmount(totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+        printFinalAmount(totalPrice, promotionDiscount, membershipDiscount, finalPrice);
     }
 
     private void printProductList(List<Product> products) {

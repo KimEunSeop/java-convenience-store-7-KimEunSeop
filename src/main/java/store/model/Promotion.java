@@ -1,6 +1,7 @@
 package store.model;
 
 public class Promotion {
+    public static final String SOLD_OUT = "재고 없음";
     private String name;
     private int buyCount;
     private int getCount;
@@ -33,5 +34,11 @@ public class Promotion {
 
     public String getEndDate() {
         return endDate;
+    }
+
+    public void SoldOut() {
+        this.name = SOLD_OUT;
+        this.buyCount = 0;
+        this.getCount = 0;
     }
 }

@@ -44,14 +44,15 @@ public class StoreController {
     }
 
     private void buy() {
+        shoppingCart.buy();
         Map<String, Integer> freeItems = promotionChecker.getFreeItems();
         List<Product> allProducts = shoppingCart.getAllProducts();
-        int totalAmount = priceCalculator.getTotalAmount();
+        int totalPrice = priceCalculator.getTotalPrice();
         int promotionDiscount = priceCalculator.getPromotionDiscount();
         int membershipDiscount = priceCalculator.getMembershipDiscount();
-        int finalAmount = priceCalculator.getFinalAmount();
+        int finalAmount = priceCalculator.getFinalprice();
 
-        outputView.printReceipt(freeItems, allProducts, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+        outputView.printReceipt(freeItems, allProducts, totalPrice, promotionDiscount, membershipDiscount, finalAmount);
     }
 
     private void set() {

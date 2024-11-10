@@ -6,7 +6,7 @@ public class PriceCalculator {
 
     public static final double MEMBERSHIP_DISCOUNT_PERSENTAGE = 0.3;
     private final ShoppingCart shoppingCart;
-    private int totalAmount = 0;
+    private int totalPrice = 0;
     private int promotionDiscount = 0;
     private int membershipDiscount = 0;
 
@@ -16,10 +16,10 @@ public class PriceCalculator {
 
     public void calculateTotal() {
         for (Product product : shoppingCart.getProducts()) {
-            totalAmount += product.getPrice() * product.getQuantity();
+            totalPrice += product.getPrice() * product.getQuantity();
         }
         for (Product product : shoppingCart.getPromotionProducts()) {
-            totalAmount += product.getPrice() * product.getQuantity();
+            totalPrice += product.getPrice() * product.getQuantity();
         }
     }
 
@@ -37,7 +37,7 @@ public class PriceCalculator {
 
     public void calculatemembershipDiscount(String input) {
         if ("Y".equalsIgnoreCase(input)) {
-            membershipDiscount = (int) ((totalAmount - promotionDiscount) * MEMBERSHIP_DISCOUNT_PERSENTAGE);
+            membershipDiscount = (int) ((totalPrice - promotionDiscount) * MEMBERSHIP_DISCOUNT_PERSENTAGE);
             if (membershipDiscount > 8000) {
                 membershipDiscount = 8000;
             }
@@ -50,8 +50,8 @@ public class PriceCalculator {
 
     }
 
-    public int getTotalAmount() {
-        return totalAmount;
+    public int getTotalPrice() {
+        return totalPrice;
     }
 
     public int getPromotionDiscount() {
@@ -62,7 +62,7 @@ public class PriceCalculator {
         return membershipDiscount;
     }
 
-    public int getFinalAmount() {
-        return totalAmount - promotionDiscount - membershipDiscount;
+    public int getFinalprice() {
+        return totalPrice - promotionDiscount - membershipDiscount;
     }
 }
