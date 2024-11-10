@@ -29,7 +29,7 @@ class ShoppingCartTest {
 
     @Test
     void 존재하지_않는_상품을_구매할_때_예외가_발생한다() {
-        String input = "[존재하지_않는_상품-1]";
+        String input = "[없는상품-1]";
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             new ShoppingCart(input, productRepository);

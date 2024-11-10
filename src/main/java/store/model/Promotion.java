@@ -1,7 +1,9 @@
 package store.model;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class Promotion {
-    public static final String SOLD_OUT = "재고 없음";
     private String name;
     private int buyCount;
     private int getCount;
@@ -34,5 +36,12 @@ public class Promotion {
 
     public String getEndDate() {
         return endDate;
+    }
+
+    public boolean isValid() {
+        LocalDate today = LocalDate.now();
+        LocalDate start = LocalDate.parse(this.startDate, DateTimeFormatter.ISO_DATE);
+        LocalDate end = LocalDate.parse(this.endDate, DateTimeFormatter.ISO_DATE);
+        return !(today.isBefore(start) || today.isAfter(end));
     }
 }

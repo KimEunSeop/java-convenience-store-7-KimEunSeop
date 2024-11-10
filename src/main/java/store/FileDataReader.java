@@ -1,5 +1,6 @@
 package store;
 
+import camp.nextstep.edu.missionutils.DateTimes;
 import store.model.Product;
 import store.model.Promotion;
 import store.repository.ProductRepository;
@@ -9,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class FileDataReader {
@@ -34,10 +36,11 @@ public class FileDataReader {
         if (promotion == null) {
             return false;
         }
-        LocalDate today = LocalDate.now();
+        LocalDateTime today = DateTimes.now();
         LocalDate startDate = LocalDate.parse(promotion.getStartDate(), DateTimeFormatter.ISO_DATE);
         LocalDate endDate = LocalDate.parse(promotion.getEndDate(), DateTimeFormatter.ISO_DATE);
-        return !(today.isBefore(startDate) || today.isAfter(endDate));
+
+        return !(today.toLocalDate().isBefore(startDate) || today.toLocalDate().isAfter(endDate));
     }
 
     private static Promotion parsePromotion(String line) {

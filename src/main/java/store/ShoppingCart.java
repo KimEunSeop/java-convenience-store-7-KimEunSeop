@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCart {
+    public static final int EMPTY = 0;
     private List<Product> products = new ArrayList<>();
     private List<Product> promotionProducts = new ArrayList<>();
     private final ProductRepository productRepository;
@@ -137,7 +138,7 @@ public class ShoppingCart {
     }
 
     private void validateExistence(String name) {
-        if (productRepository.findByName(name) == null) {
+        if (productRepository.findByName(name).size() == EMPTY) {
             throw new IllegalArgumentException("[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.");
         }
     }

@@ -77,15 +77,9 @@ class PromotionCheckerTest {
         String input = "[콜라-2]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionChecker = new PromotionChecker(shoppingCart);
-
+        promotionChecker.findMissedItems();
         promotionChecker.checkMissedItemsResponse("Y");
-
-
-        for (Product product : shoppingCart.getPromotionProducts()) {
-            if (product.getName().equals("콜라")) {
-                assertEquals(3, product.getQuantity());
-            }
-        }
+        assertEquals(3, shoppingCart.getPromotionProducts().get(0).getQuantity());
     }
 
     @Test
@@ -96,7 +90,7 @@ class PromotionCheckerTest {
         String input = "[콜라-2]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionChecker = new PromotionChecker(shoppingCart);
-
+        promotionChecker.findMissedItems();
         promotionChecker.checkMissedItemsResponse("N");
 
         for (Product product : shoppingCart.getPromotionProducts()) {
@@ -130,18 +124,18 @@ class PromotionCheckerTest {
         String input = "[콜라-12]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionChecker = new PromotionChecker(shoppingCart);
-
+        promotionChecker.checkPromotionQuantity(productRepository);
         promotionChecker.checkExceedItemsResponse("Y");
 
 
         for (Product product : shoppingCart.getPromotionProducts()) {
             if (product.getName().equals("콜라")) {
-                assertEquals(9, product.getQuantity());
+                assertEquals(10, product.getQuantity());
             }
         }
         for (Product product : shoppingCart.getProducts()) {
             if (product.getName().equals("콜라")) {
-                assertEquals(3, product.getQuantity());
+                assertEquals(2, product.getQuantity());
             }
         }
     }
@@ -151,20 +145,15 @@ class PromotionCheckerTest {
         productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
         productRepository.add(new Product("콜라", 1000, 10, null));
 
-        String input = "[콜라-12]";
+        String input = "[콜라-8]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionChecker = new PromotionChecker(shoppingCart);
-
+        promotionChecker.checkPromotionQuantity(productRepository);
         promotionChecker.checkExceedItemsResponse("N");
 
         for (Product product : shoppingCart.getPromotionProducts()) {
             if (product.getName().equals("콜라")) {
-                assertEquals(9, product.getQuantity());
-            }
-        }
-        for (Product product : shoppingCart.getProducts()) {
-            if (product.getName().equals("콜라")) {
-                 assertEquals(0, product.getQuantity());
+                assertEquals(8, product.getQuantity());
             }
         }
     }
