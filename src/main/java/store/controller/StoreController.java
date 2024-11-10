@@ -4,13 +4,14 @@ import store.FileDataReader;
 import store.PriceCalculator;
 import store.PromotionChecker;
 import store.ShoppingCart;
+import store.model.Product;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
 import store.view.InputView;
 import store.view.OutputView;
 
 import java.io.IOException;
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 
 public class StoreController {
@@ -39,16 +40,18 @@ public class StoreController {
         priceCalculator.calculateTotal();
         priceCalculator.calculatePromotions();
         process(this::inputMembership);
-        makeRecepit();
+        buy();
     }
 
-    private void makeRecepit() {
+    private void buy() {
+        Map<String, Integer> freeItems = promotionChecker.getFreeItems();
+        List<Product> allProducts = shoppingCart.getAllProducts();
         int totalAmount = priceCalculator.getTotalAmount();
         int promotionDiscount = priceCalculator.getPromotionDiscount();
         int membershipDiscount = priceCalculator.getMembershipDiscount();
         int finalAmount = priceCalculator.getFinalAmount();
 
-        outputView.printReceipt(totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+        outputView.printReceipt(freeItems, allProducts, totalAmount, promotionDiscount, membershipDiscount, finalAmount);
     }
 
     private void set() {

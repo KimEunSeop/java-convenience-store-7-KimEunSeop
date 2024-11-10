@@ -13,6 +13,7 @@ public class PromotionChecker {
 
     private Map<String, Integer> missedItems = new HashMap<>();
     private Map<String, Integer> exceedItems = new HashMap<>();
+    private Map<String, Integer> freeItems = new HashMap<>();
 
     public PromotionChecker(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
@@ -41,7 +42,6 @@ public class PromotionChecker {
         for (Product product : shoppingCart.getPromotionProducts()) {
             checkQuantity(product, productRepository);
         }
-
         return exceedItems;
     }
 
@@ -52,7 +52,6 @@ public class PromotionChecker {
                 quantityLimit = product.getQuantity();
             }
         }
-
         if (checkProduct.getQuantity() > quantityLimit) {
             int exceedQuantity = calculateMaxQuantity(checkProduct, quantityLimit);
             exceedItems.put(checkProduct.getName(), exceedQuantity);
@@ -109,5 +108,18 @@ public class PromotionChecker {
             return;
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
+    }
+
+    public Map<String, Integer> getFreeItems() {
+        for (Product product : shoppingCart.getPromotionProducts()) {
+            int buyCount = product.getPromotion().getBuyCount();
+            int getCount = product.getPromotion().getGetCount();
+            int freeCount = ((product.getQuantity() / (buyCount + getCount)) * getCount);
+            if(product.getQuantity() % (buyCount + getCount) >  buyCount){
+                freeCount += ((product.getQuantity() % (buyCount + getCount)) - buyCount);
+            }
+            freeItems.put(product.getName(), freeCount);
+        }
+        return freeItems;
     }
 }

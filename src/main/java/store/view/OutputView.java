@@ -1,6 +1,9 @@
 package store.view;
 
+import store.model.Product;
+
 import java.util.List;
+import java.util.Map;
 
 public class OutputView {
     public void printWelcomeGuide() {
@@ -41,18 +44,38 @@ public class OutputView {
         System.out.println("멤버십 할인을 받으시겠습니까?");
     }
 
-    public void printReceipt(int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
+    public void printReceipt(Map<String, Integer> freeItems, List<Product> products, int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
         System.out.println("==============W 편의점================");
-        System.out.println("상품명\t\t수량\t\t금액");
+        printProductList(products);
 
+        if (!freeItems.isEmpty()) {
+            System.out.println("\n==============증   정================");
+            printFreeItems(freeItems);
+        }
 
-        System.out.println("==============증   정================");
+        printFinalAmount(totalAmount, promotionDiscount, membershipDiscount, finalAmount);
+    }
 
+    private void printProductList(List<Product> products) {
+        System.out.printf("%-10s\t%-6s\t%-10s\n", "상품명", "수량", "금액");
+        for (Product product : products) {
+            System.out.printf("%-10s\t%-6d\t%-10d\n", product.getName(), product.getQuantity(), product.getPrice() * product.getQuantity());
+        }
+    }
 
+    private void printFreeItems(Map<String, Integer> freeItems) {
+        for (Map.Entry<String, Integer> entry : freeItems.entrySet()) {
+            String productName = entry.getKey();
+            int quantity = entry.getValue();
+            System.out.printf("%-10s\t%-6d\t\n", productName, quantity);
+        }
+    }
+
+    private void printFinalAmount(int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
         System.out.println("====================================");
-        System.out.println("총 구매액\t\t" + totalAmount + "\t" + totalAmount);
-        System.out.println("행사 할인\t\t-" + promotionDiscount);
-        System.out.println("멤버십 할인\t\t-" + membershipDiscount);
-        System.out.println("내실 돈\t\t\t" + finalAmount);
+        System.out.printf("%-10s\t%-6d\t%-10d\n", "총 구매액", totalAmount, totalAmount);
+        System.out.printf("%-10s\t%-6d\t%-10d\n", "행사 할인", -promotionDiscount, -promotionDiscount);
+        System.out.printf("%-10s\t%-6d\t%-10d\n", "멤버십 할인", -membershipDiscount, -membershipDiscount);
+        System.out.printf("%-10s\t%-6d\t%-10d\n", "내실 돈", finalAmount, finalAmount);
     }
 }

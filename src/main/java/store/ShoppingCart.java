@@ -122,6 +122,14 @@ public class ShoppingCart {
         }
     }
 
+    public void substractPromotionProduct(String name, Integer exceedQuantity) {
+        for (Product product : promotionProducts) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() - exceedQuantity);
+            }
+        }
+    }
+
     public List<Product> getProducts() {
         return products;
     }
@@ -134,11 +142,34 @@ public class ShoppingCart {
         return productRepository;
     }
 
-    public void substractPromotionProduct(String name, Integer exceedQuantity) {
-        for (Product product : promotionProducts) {
-            if (product.getName().equals(name)) {
-                product.setQuantity(product.getQuantity() - exceedQuantity);
+    public List<Product> getAllProducts() {
+        List<Product> totalProducts = new ArrayList<>();
+
+        combineProducts(products, totalProducts);
+        combinePromotionProducts(promotionProducts, totalProducts);
+
+        return totalProducts;
+    }
+
+    private void combineProducts(List<Product> products, List<Product> totalProducts) {
+        for (Product product : products) {
+            totalProducts.add(new Product(product.getName(), product.getPrice(), product.getQuantity(), null));
+        }
+    }
+
+    private void combinePromotionProducts(List<Product> promotionProducts, List<Product> totalProducts) {
+        for (Product promotionProduct : promotionProducts) {
+            update(promotionProduct, totalProducts);
+        }
+    }
+
+    private void update(Product promotionProduct, List<Product> totalProducts) {
+        for (Product product : totalProducts) {
+            if (product.getName().equals(promotionProduct.getName())) {
+                product.setQuantity(product.getQuantity() + promotionProduct.getQuantity());
+                return;
             }
         }
+        totalProducts.add(new Product(promotionProduct.getName(), promotionProduct.getPrice(), promotionProduct.getQuantity(), null));
     }
 }
