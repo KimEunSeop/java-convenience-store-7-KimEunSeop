@@ -1,9 +1,6 @@
 package store.controller;
 
-import store.FileDataReader;
-import store.PriceCalculator;
-import store.PromotionChecker;
-import store.ShoppingCart;
+import store.*;
 import store.model.Product;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
@@ -104,7 +101,7 @@ public class StoreController {
         if ("N".equalsIgnoreCase(answer)) {
             return false;
         }
-        throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
+        throw new IllegalArgumentException(ErrorMessage.INVALID_Y_OR_N_INPUT.getMessage());
     }
 
     private void inputShoppingCart() {
