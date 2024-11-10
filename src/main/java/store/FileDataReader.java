@@ -16,17 +16,17 @@ public class FileDataReader {
     public static void loadPromotions(String filename, PromotionRepository promotionRepository) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             bufferedReader.readLine();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                Promotion promotion = parsePromotion(line);
-                checkPromotion(promotionRepository, promotion);
-            }
+            analyzeLine(promotionRepository, bufferedReader);
         }
     }
 
-    private static void checkPromotion(PromotionRepository promotionRepository, Promotion promotion) {
-        if (isPromotionValid(promotion)) {
-            promotionRepository.add(promotion);
+    private static void analyzeLine(PromotionRepository promotionRepository, BufferedReader bufferedReader) throws IOException {
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            Promotion promotion = parsePromotion(line);
+            if (isPromotionValid(promotion)) {
+                promotionRepository.add(promotion);
+            }
         }
     }
 
@@ -51,34 +51,51 @@ public class FileDataReader {
         );
     }
 
-    public static void loadProducts(
-            String filename, ProductRepository productRepository, PromotionRepository promotionRepository
-    ) throws IOException {
+    public static void loadProducts(String filename, ProductRepository productRepository, PromotionRepository promotionRepository) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
-                Product product = parseProduct(line, promotionRepository);
-                productRepository.add(product);
+                parseAndAddProduct(line, productRepository, promotionRepository);
             }
         }
     }
 
-    private static Product parseProduct(String line, PromotionRepository promotionRepository) {
+    private static void parseAndAddProduct(
+            String line, ProductRepository productRepository, PromotionRepository promotionRepository) {
         String[] fields = line.split(",");
         String name = fields[0].trim();
         int price = Integer.parseInt(fields[1].trim());
         int quantity = Integer.parseInt(fields[2].trim());
         Promotion promotion = findPromotion(fields[3].trim(), promotionRepository);
+        if (productRepository.findProductByName(name) != null) {
+            updateProductQuantity(productRepository.findProductByName(name), quantity);
+            return;
+        }
+        addNewProduct(name, price, quantity, promotion, productRepository);
+    }
 
-        return new Product(name, price, quantity, promotion);
+    private static void updateProductQuantity(Product existingProduct, int quantity) {
+        existingProduct.setQuantity(existingProduct.getQuantity() + quantity);
+    }
+
+    private static void addNewProduct(
+            String name, int price, int quantity, Promotion promotion, ProductRepository productRepository) {
+        productRepository.add(new Product(name, price, quantity, promotion));
+        if (promotion != null && quantity > 0) {
+            addRegularProduct(name, price, productRepository);
+        }
+    }
+
+    private static void addRegularProduct(String name, int price, ProductRepository productRepository) {
+        Product regularProduct = new Product(name, price, 0, null);
+        productRepository.add(regularProduct);
     }
 
     private static Promotion findPromotion(String promotionName, PromotionRepository promotionRepository) {
         if (promotionName != null && !promotionName.isEmpty()) {
             return promotionRepository.findByName(promotionName);
-        } else {
-            return null;
         }
+        return null;
     }
 }
