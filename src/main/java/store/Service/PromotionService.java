@@ -1,5 +1,6 @@
-package store;
+package store.Service;
 
+import store.ErrorMessage;
 import store.model.Product;
 import store.model.Promotion;
 import store.repository.ProductRepository;
@@ -7,14 +8,14 @@ import store.repository.ProductRepository;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PromotionChecker {
+public class PromotionService {
 
     private ShoppingCart shoppingCart;
     private Map<String, Integer> missedItems = new HashMap<>();
     private Map<String, Integer> exceedItems = new HashMap<>();
     private Map<String, Integer> freeItems = new HashMap<>();
 
-    public PromotionChecker(ShoppingCart shoppingCart) {
+    public PromotionService(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
     }
 

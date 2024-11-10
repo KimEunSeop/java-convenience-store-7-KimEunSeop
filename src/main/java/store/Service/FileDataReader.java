@@ -1,4 +1,4 @@
-package store;
+package store.Service;
 
 import camp.nextstep.edu.missionutils.DateTimes;
 import store.model.Product;

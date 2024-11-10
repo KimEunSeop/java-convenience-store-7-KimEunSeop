@@ -1,4 +1,4 @@
-package store;
+package store.Service;
 
 import store.model.Product;
 
@@ -28,6 +28,7 @@ public class PriceCalculator {
             int buyCount = promotionProduct.getPromotion().getBuyCount();
             int getCount = promotionProduct.getPromotion().getGetCount();
             int freeCount = ((promotionProduct.getQuantity() / (buyCount + getCount)) * getCount);
+
             if (promotionProduct.getQuantity() % (buyCount + getCount) > buyCount) {
                 freeCount += ((promotionProduct.getQuantity() % (buyCount + getCount)) - buyCount);
             }

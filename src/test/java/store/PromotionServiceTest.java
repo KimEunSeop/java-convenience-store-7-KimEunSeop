@@ -1,5 +1,7 @@
 package store;
 
+import store.Service.PromotionService;
+import store.Service.ShoppingCart;
 import store.model.Product;
 import store.model.Promotion;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,11 +10,11 @@ import store.repository.ProductRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PromotionCheckerTest {
+class PromotionServiceTest {
 
     private ProductRepository productRepository;
     private ShoppingCart shoppingCart;
-    private PromotionChecker promotionChecker;
+    private PromotionService promotionService;
 
     @BeforeEach
     void setUp() {
@@ -26,10 +28,10 @@ class PromotionCheckerTest {
 
         String input = "[콜라-5]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
 
-        assertEquals(1, promotionChecker.findMissedItems().get("콜라"));
+        assertEquals(1, promotionService.findMissedItems().get("콜라"));
     }
 
     @Test
@@ -39,10 +41,10 @@ class PromotionCheckerTest {
 
         String input = "[콜라-2]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
 
-        assertEquals(1, promotionChecker.findMissedItems().get("콜라"));
+        assertEquals(1, promotionService.findMissedItems().get("콜라"));
     }
 
     @Test
@@ -52,9 +54,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-3]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
-        assertEquals(1, promotionChecker.findMissedItems().get("콜라"));
+        assertEquals(1, promotionService.findMissedItems().get("콜라"));
     }
 
     @Test
@@ -64,9 +66,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-5]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
-        assertEquals(1, promotionChecker.findMissedItems().get("콜라"));
+        assertEquals(1, promotionService.findMissedItems().get("콜라"));
     }
 
     @Test
@@ -76,9 +78,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-2]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
-        promotionChecker.findMissedItems();
-        promotionChecker.checkMissedItemsResponse("Y");
+        promotionService = new PromotionService(shoppingCart);
+        promotionService.findMissedItems();
+        promotionService.checkMissedItemsResponse("Y");
         assertEquals(3, shoppingCart.getPromotionProducts().get(0).getQuantity());
     }
 
@@ -89,9 +91,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-2]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
-        promotionChecker.findMissedItems();
-        promotionChecker.checkMissedItemsResponse("N");
+        promotionService = new PromotionService(shoppingCart);
+        promotionService.findMissedItems();
+        promotionService.checkMissedItemsResponse("N");
 
         for (Product product : shoppingCart.getPromotionProducts()) {
             if (product.getName().equals("콜라")) {
@@ -107,10 +109,10 @@ class PromotionCheckerTest {
 
         String input = "[콜라-5]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            promotionChecker.checkMissedItemsResponse("Z");
+            promotionService.checkMissedItemsResponse("Z");
         });
 
         assertEquals("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.", exception.getMessage());
@@ -123,9 +125,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-12]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
-        promotionChecker.checkPromotionQuantity(productRepository);
-        promotionChecker.checkExceedItemsResponse("Y");
+        promotionService = new PromotionService(shoppingCart);
+        promotionService.checkPromotionQuantity(productRepository);
+        promotionService.checkExceedItemsResponse("Y");
 
 
         for (Product product : shoppingCart.getPromotionProducts()) {
@@ -147,9 +149,9 @@ class PromotionCheckerTest {
 
         String input = "[콜라-8]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
-        promotionChecker.checkPromotionQuantity(productRepository);
-        promotionChecker.checkExceedItemsResponse("N");
+        promotionService = new PromotionService(shoppingCart);
+        promotionService.checkPromotionQuantity(productRepository);
+        promotionService.checkExceedItemsResponse("N");
 
         for (Product product : shoppingCart.getPromotionProducts()) {
             if (product.getName().equals("콜라")) {
@@ -165,12 +167,12 @@ class PromotionCheckerTest {
 
         String input = "[콜라-12]";
         shoppingCart = new ShoppingCart(input, productRepository);
-        promotionChecker = new PromotionChecker(shoppingCart);
+        promotionService = new PromotionService(shoppingCart);
 
-        promotionChecker.checkMissedItemsResponse("Y");
+        promotionService.checkMissedItemsResponse("Y");
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            promotionChecker.checkExceedItemsResponse("z");
+            promotionService.checkExceedItemsResponse("z");
         });
 
         assertEquals("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.", exception.getMessage());

@@ -1,5 +1,6 @@
-package store;
+package store.Service;
 
+import store.ErrorMessage;
 import store.model.Product;
 import store.repository.ProductRepository;
 

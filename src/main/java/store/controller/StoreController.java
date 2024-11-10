@@ -1,6 +1,10 @@
 package store.controller;
 
 import store.*;
+import store.Service.FileDataReader;
+import store.Service.PriceCalculator;
+import store.Service.PromotionService;
+import store.Service.ShoppingCart;
 import store.model.Product;
 import store.repository.ProductRepository;
 import store.repository.PromotionRepository;
@@ -20,7 +24,7 @@ public class StoreController {
     private final PromotionRepository promotionRepository = new PromotionRepository();
     private final ProductRepository productRepository = new ProductRepository();
     private ShoppingCart shoppingCart;
-    private PromotionChecker promotionChecker;
+    private PromotionService promotionService;
     private PriceCalculator priceCalculator;
 
     public void start() {
@@ -53,11 +57,11 @@ public class StoreController {
     }
 
     private void checkItems() {
-        promotionChecker = new PromotionChecker(shoppingCart);
-        if (promotionChecker.findMissedItems().size() != EMPTY) {
+        promotionService = new PromotionService(shoppingCart);
+        if (promotionService.findMissedItems().size() != EMPTY) {
             process(this::inputMissedItem);
         }
-        if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
+        if (promotionService.checkPromotionQuantity(productRepository).size() != EMPTY) {
             process(this::inputExclude);
         }
     }
@@ -71,7 +75,7 @@ public class StoreController {
 
     private void buy() {
         shoppingCart.buy();
-        Map<String, Integer> freeItems = promotionChecker.getFreeItems();
+        Map<String, Integer> freeItems = promotionService.getFreeItems();
         List<Product> allProducts = shoppingCart.getAllProducts();
         int totalPrice = priceCalculator.getTotalPrice();
         int promotionDiscount = priceCalculator.getPromotionDiscount();
@@ -116,12 +120,12 @@ public class StoreController {
 
     private void inputMissedItem() {
         try {
-            Map<String, Integer> missedItems = promotionChecker.findMissedItems();
+            Map<String, Integer> missedItems = promotionService.findMissedItems();
             for (String key : missedItems.keySet()) {
                 outputView.printGetMissedItemGuide(key, missedItems.get(key));
                 outputView.printYOrN();
             }
-            promotionChecker.checkMissedItemsResponse(inputView.getResponse());
+            promotionService.checkMissedItemsResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputMissedItem);
@@ -130,12 +134,12 @@ public class StoreController {
 
     private void inputExclude() {
         try {
-            Map<String, Integer> exceedItems = promotionChecker.checkPromotionQuantity(productRepository);
+            Map<String, Integer> exceedItems = promotionService.checkPromotionQuantity(productRepository);
             for (String key : exceedItems.keySet()) {
                 outputView.printExcludeGuide(key, exceedItems.get(key));
                 outputView.printYOrN();
             }
-            promotionChecker.checkExceedItemsResponse(inputView.getResponse());
+            promotionService.checkExceedItemsResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputExclude);

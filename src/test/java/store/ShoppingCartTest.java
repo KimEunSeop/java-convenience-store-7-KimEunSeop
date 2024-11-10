@@ -1,5 +1,6 @@
 package store;
 
+import store.Service.ShoppingCart;
 import store.model.Product;
 import store.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
