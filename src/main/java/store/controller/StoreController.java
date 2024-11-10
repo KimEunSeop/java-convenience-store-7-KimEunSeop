@@ -29,25 +29,59 @@ public class StoreController {
     public void start() {
         set();
         while(true){
-            outputView.printWelcomeGuide();
-            outputView.printItemList(productRepository.getProductsAsString());
-            process(this::inputShoppingCart);
-            promotionChecker = new PromotionChecker(shoppingCart);
-            if (promotionChecker.findMissedItems().size() != EMPTY) {
-                process(this::inputMissedItem);
-            }
-            if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
-                process(this::inputExclude);
-            }
-            priceCalculator = new PriceCalculator(shoppingCart);
-            priceCalculator.calculateTotal();
-            priceCalculator.calculatePromotions();
-            process(this::inputMembership);
+            pickItems();
+            checkItems();
+            calculate();
             buy();
             if (!checkPurchaseAdditional()) {
                 break;
             }
         }
+    }
+
+    private void set() {
+        FileDataReader fileDataReader = new FileDataReader();
+        try {
+            fileDataReader.loadPromotions(PROMOTIONS_FILE_PATH, promotionRepository);
+            fileDataReader.loadProducts(PRODUCTS_FILE_PATH, productRepository, promotionRepository);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void pickItems() {
+        outputView.printWelcomeGuide();
+        outputView.printItemList(productRepository.getProductsAsString());
+        process(this::inputShoppingCart);
+    }
+
+    private void checkItems() {
+        promotionChecker = new PromotionChecker(shoppingCart);
+        if (promotionChecker.findMissedItems().size() != EMPTY) {
+            process(this::inputMissedItem);
+        }
+        if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
+            process(this::inputExclude);
+        }
+    }
+
+    private void calculate() {
+        priceCalculator = new PriceCalculator(shoppingCart);
+        priceCalculator.calculateTotal();
+        priceCalculator.calculatePromotions();
+        process(this::inputMembership);
+    }
+
+    private void buy() {
+        shoppingCart.buy();
+        Map<String, Integer> freeItems = promotionChecker.getFreeItems();
+        List<Product> allProducts = shoppingCart.getAllProducts();
+        int totalPrice = priceCalculator.getTotalPrice();
+        int promotionDiscount = priceCalculator.getPromotionDiscount();
+        int membershipDiscount = priceCalculator.getMembershipDiscount();
+        int finalAmount = priceCalculator.getFinalprice();
+
+        outputView.printReceipt(freeItems, allProducts, totalPrice, promotionDiscount, membershipDiscount, finalAmount);
     }
 
     private boolean checkPurchaseAdditional() {
@@ -71,28 +105,6 @@ public class StoreController {
             return false;
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
-    }
-
-    private void buy() {
-        shoppingCart.buy();
-        Map<String, Integer> freeItems = promotionChecker.getFreeItems();
-        List<Product> allProducts = shoppingCart.getAllProducts();
-        int totalPrice = priceCalculator.getTotalPrice();
-        int promotionDiscount = priceCalculator.getPromotionDiscount();
-        int membershipDiscount = priceCalculator.getMembershipDiscount();
-        int finalAmount = priceCalculator.getFinalprice();
-
-        outputView.printReceipt(freeItems, allProducts, totalPrice, promotionDiscount, membershipDiscount, finalAmount);
-    }
-
-    private void set() {
-        FileDataReader fileDataReader = new FileDataReader();
-        try {
-            fileDataReader.loadPromotions(PROMOTIONS_FILE_PATH, promotionRepository);
-            fileDataReader.loadProducts(PRODUCTS_FILE_PATH, productRepository, promotionRepository);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void inputShoppingCart() {
