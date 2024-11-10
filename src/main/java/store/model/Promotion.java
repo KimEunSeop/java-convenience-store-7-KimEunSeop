@@ -35,10 +35,4 @@ public class Promotion {
     public String getEndDate() {
         return endDate;
     }
-
-    public void SoldOut() {
-        this.name = SOLD_OUT;
-        this.buyCount = 0;
-        this.getCount = 0;
-    }
 }

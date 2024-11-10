@@ -31,6 +31,6 @@ public class Product {
     }
 
     public void setSoldOut() {
-        promotion.SoldOut();
+        this.promotion = new Promotion("재고 없음", 0, 0, null, null);
     }
 }

@@ -4,9 +4,7 @@ import store.model.Product;
 import store.repository.ProductRepository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShoppingCart {
     private List<Product> products = new ArrayList<>();
@@ -202,40 +200,44 @@ public class ShoppingCart {
         totalProducts.add(new Product(promotionProduct.getName(), promotionProduct.getPrice(), promotionProduct.getQuantity(), null));
     }
 
-    public void buy() {
-        List<Product> allProducts = productRepository.getProducts();
-
-        Map<String, Product> productMap = new HashMap<>();
-        for (Product repoProduct : allProducts) {
-            productMap.put(repoProduct.getName(), repoProduct);
-        }
-
-        buyProduct(productMap, products);
-        buyProduct(productMap, promotionProducts);
-    }
-
-    private void buyProduct(Map<String, Product> productMap, List<Product> products) {
-        for (Product product : products) {
-            Product repositoryProduct = productMap.get(product.getName());
-
-            if (repositoryProduct != null) {
-                int newQuantity = repositoryProduct.getQuantity() - product.getQuantity();
-                repositoryProduct.setQuantity(newQuantity);
-                if (newQuantity == 0) {
-                    repositoryProduct.setSoldOut();
-                }
-            }
-        }
-    }
-
-    public int getRemainStock(String name) {
-        int promotionStock = productRepository.findPromotionStockByName(name);
+    public int getRemainPromotionProductStock(String name) {
+        int promotionProductStock = productRepository.findPromotionProductStockByName(name);
 
         for (Product product : promotionProducts) {
             if (product.getName().equals(name)) {
-                promotionStock -= product.getQuantity();
+                promotionProductStock -= product.getQuantity();
             }
         }
-        return promotionStock;
+        return promotionProductStock;
+    }
+
+    public int getRemainProductStock(String name) {
+        int productStock = productRepository.findProductStockByName(name);
+
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                productStock -= product.getQuantity();
+            }
+        }
+        return productStock;
+    }
+
+    public void buy() {
+        buyPromotionProducts();
+        buyProducts();
+    }
+
+    private void buyPromotionProducts() {
+        for (Product promotionProduct : promotionProducts) {
+            Product repositoryProduct = productRepository.findPromotionProductByName(promotionProduct.getName());
+            repositoryProduct.setQuantity(getRemainPromotionProductStock(promotionProduct.getName()));
+        }
+    }
+
+    private void buyProducts() {
+        for (Product product : products) {
+            Product repositoryProduct = productRepository.findProductByName(product.getName());
+            repositoryProduct.setQuantity(getRemainProductStock(product.getName()));
+        }
     }
 }

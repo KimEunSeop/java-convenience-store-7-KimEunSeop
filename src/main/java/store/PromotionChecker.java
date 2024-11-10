@@ -28,7 +28,7 @@ public class PromotionChecker {
 
     private void checkMissed(Product product) {
         int missedItemCount = calculateMissedItemCount(product.getQuantity(), product.getPromotion());
-        int stock = shoppingCart.getRemainStock(product.getName());
+        int stock = shoppingCart.getRemainPromotionProductStock(product.getName());
         if (missedItemCount > 0 && stock != 0) {
             if(missedItemCount <= stock){
                 missedItems.put(product.getName(), missedItemCount);

@@ -23,6 +23,20 @@ public class ProductRepository {
                 .collect(Collectors.toList());
     }
 
+    public Product findPromotionProductByName(String name) {
+        return products.stream()
+                .filter(product -> product.getName().equals(name) && product.getPromotion() != null)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Product findProductByName(String name) {
+        return products.stream()
+                .filter(product -> product.getName().equals(name) && product.getPromotion() == null)
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<String> getProductsAsString() {
         List<String> productStrings = new ArrayList<>();
         for (Product product : products) {
@@ -37,9 +51,17 @@ public class ProductRepository {
         return productStrings;
     }
 
-    public int findPromotionStockByName(String name) {
+    public int findPromotionProductStockByName(String name) {
         return products.stream()
                 .filter(product -> product.getName().equals(name) && product.getPromotion() != null)
+                .mapToInt(Product::getQuantity)
+                .findFirst()
+                .orElse(0);
+    }
+
+    public int findProductStockByName(String name) {
+        return products.stream()
+                .filter(product -> product.getName().equals(name) && product.getPromotion() == null)
                 .mapToInt(Product::getQuantity)
                 .findFirst()
                 .orElse(0);
