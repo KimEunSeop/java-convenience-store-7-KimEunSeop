@@ -40,4 +40,19 @@ public class OutputView {
     public void printMembershipDiscountGuide() {
         System.out.println("멤버십 할인을 받으시겠습니까?");
     }
+
+    public void printReceipt(int totalAmount, int promotionDiscount, int membershipDiscount, int finalAmount) {
+        System.out.println("==============W 편의점================");
+        System.out.println("상품명\t\t수량\t\t금액");
+
+
+        System.out.println("==============증   정================");
+
+
+        System.out.println("====================================");
+        System.out.println("총 구매액\t\t" + totalAmount + "\t" + totalAmount);
+        System.out.println("행사 할인\t\t-" + promotionDiscount);
+        System.out.println("멤버십 할인\t\t-" + membershipDiscount);
+        System.out.println("내실 돈\t\t\t" + finalAmount);
+    }
 }

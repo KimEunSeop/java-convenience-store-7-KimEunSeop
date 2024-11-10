@@ -19,10 +19,14 @@ public class FileDataReader {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 Promotion promotion = parsePromotion(line);
-                if (isPromotionValid(promotion)) {
-                    promotionRepository.add(promotion);
-                }
+                checkPromotion(promotionRepository, promotion);
             }
+        }
+    }
+
+    private static void checkPromotion(PromotionRepository promotionRepository, Promotion promotion) {
+        if (isPromotionValid(promotion)) {
+            promotionRepository.add(promotion);
         }
     }
 

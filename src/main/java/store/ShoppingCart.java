@@ -49,17 +49,39 @@ public class ShoppingCart {
     }
 
     public void changeProduct(String name, Integer exceedQuantity) {
+        int newPrice = 0;
         for (Product product : promotionProducts) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() - exceedQuantity);
+                newPrice = product.getPrice();
+                break;
             }
         }
+        promotionProducts = removeEmptyProducts(promotionProducts);
+        boolean isExist = false;
         for (Product product : products) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + exceedQuantity);
+                isExist = true;
+                break;
             }
         }
+
+        if (!isExist) {
+            products.add(new Product(name, newPrice, exceedQuantity, null));
+        }
     }
+
+    public List<Product> removeEmptyProducts(List<Product> products) {
+        List<Product> nonEmptyProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getQuantity() > 0) {
+                nonEmptyProducts.add(product);
+            }
+        }
+        return nonEmptyProducts;
+    }
+
 
     private boolean hasProduct(String name, int quantity) {
         for (Product product : promotionProducts) {

@@ -27,9 +27,11 @@ public class PriceCalculator {
         for (Product promotionProduct : shoppingCart.getPromotionProducts()) {
             int buyCount = promotionProduct.getPromotion().getBuyCount();
             int getCount = promotionProduct.getPromotion().getGetCount();
-            promotionDiscount = ((promotionProduct.getQuantity() / (buyCount + getCount)) * getCount)
-                    - ((promotionProduct.getQuantity() % (buyCount + getCount)) - buyCount);
-
+            int freeCount = ((promotionProduct.getQuantity() / (buyCount + getCount)) * getCount);
+            if(promotionProduct.getQuantity() % (buyCount + getCount) >  buyCount){
+                freeCount += ((promotionProduct.getQuantity() % (buyCount + getCount)) - buyCount);
+            }
+            promotionDiscount = freeCount * promotionProduct.getPrice();
         }
     }
 
@@ -46,6 +48,18 @@ public class PriceCalculator {
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
 
+    }
+
+    public int getTotalAmount() {
+        return totalAmount;
+    }
+
+    public int getPromotionDiscount() {
+        return promotionDiscount;
+    }
+
+    public int getMembershipDiscount() {
+        return membershipDiscount;
     }
 
     public int getFinalAmount() {

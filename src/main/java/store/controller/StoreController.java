@@ -36,8 +36,19 @@ public class StoreController {
             process(this::inputExclude);
         }
         priceCalculator = new PriceCalculator(shoppingCart);
+        priceCalculator.calculateTotal();
+        priceCalculator.calculatePromotions();
         process(this::inputMembership);
+        makeRecepit();
+    }
 
+    private void makeRecepit() {
+        int totalAmount = priceCalculator.getTotalAmount();
+        int promotionDiscount = priceCalculator.getPromotionDiscount();
+        int membershipDiscount = priceCalculator.getMembershipDiscount();
+        int finalAmount = priceCalculator.getFinalAmount();
+
+        outputView.printReceipt(totalAmount, promotionDiscount, membershipDiscount, finalAmount);
     }
 
     private void set() {

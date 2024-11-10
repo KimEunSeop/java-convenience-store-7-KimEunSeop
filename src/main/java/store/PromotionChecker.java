@@ -34,7 +34,7 @@ public class PromotionChecker {
             amount = product.getQuantity() %
                     (product.getPromotion().getBuyCount() + product.getPromotion().getGetCount());
         }
-        shoppingCart.substractPromotionProduct(product.getName(), amount);
+        shoppingCart.changeProduct(product.getName(), amount);
     }
 
     public Map<String, Integer> checkPromotionQuantity(ProductRepository productRepository) {
@@ -106,7 +106,6 @@ public class PromotionChecker {
             for (String name : exceedItems.keySet()) {
                 shoppingCart.substractPromotionProduct(name, exceedItems.get(name));
             }
-//            System.out.println(shoppingCart.getPromotionProducts().get(0).getName() + shoppingCart.getPromotionProducts().get(0).getQuantity());
             return;
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
