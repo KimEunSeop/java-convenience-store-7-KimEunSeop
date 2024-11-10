@@ -115,7 +115,7 @@ public class StoreController {
             promotionChecker.checkMissedItemsResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
-            process(this::inputShoppingCart);
+            process(this::inputMissedItem);
         }
     }
 
@@ -140,7 +140,7 @@ public class StoreController {
             priceCalculator.calculatemembershipDiscount(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
-            process(this::inputShoppingCart);
+            process(this::inputMembership);
         }
     }
 
