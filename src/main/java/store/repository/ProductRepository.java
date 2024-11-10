@@ -36,4 +36,12 @@ public class ProductRepository {
         }
         return productStrings;
     }
+
+    public int findPromotionStockByName(String name) {
+        return products.stream()
+                .filter(product -> product.getName().equals(name) && product.getPromotion() != null)
+                .mapToInt(Product::getQuantity)
+                .findFirst()
+                .orElse(0);
+    }
 }

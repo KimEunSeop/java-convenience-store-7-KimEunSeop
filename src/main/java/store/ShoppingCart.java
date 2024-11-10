@@ -1,7 +1,6 @@
 package store;
 
 import store.model.Product;
-import store.model.Promotion;
 import store.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -39,19 +38,20 @@ public class ShoppingCart {
 
     public void addProduct(String name, int quantity) {
         if (hasProduct(name, quantity)) return;
-
         List<Product> inputProducts = productRepository.findByName(name);
-
         for (Product product : inputProducts) {
-            if(product.getPromotion().getName() != Promotion.SOLD_OUT){
+            if (product.getPromotion() == null) {
                 continue;
             }
-            if (product.getPromotion() != null) {
+            if (product.getQuantity() >= quantity) {
                 promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
-                break;
+                return;
             }
-            products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+            promotionProducts.add(new Product(name, product.getPrice(), product.getQuantity(), product.getPromotion()));
+            products.add(new Product(name, product.getPrice(), quantity - product.getQuantity(), null));
+            return;
         }
+        products.add(new Product(name, inputProducts.get(0).getPrice(), quantity, null));
     }
 
     public void changeProduct(String name, Integer exceedQuantity) {
@@ -90,19 +90,46 @@ public class ShoppingCart {
 
 
     private boolean hasProduct(String name, int quantity) {
-        for (Product product : promotionProducts) {
+        Product product = findProduct(promotionProducts, name);
+        if (product != null) {
+            addPromotionProductQuantity(product, quantity);
+            return true;
+        }
+        product = findProduct(products, name);
+        if (product != null) {
+            product.setQuantity(product.getQuantity() + quantity);
+            return true;
+        }
+        return false;
+    }
+
+    private Product findProduct(List<Product> productList, String name) {
+        for (Product product : productList) {
             if (product.getName().equals(name)) {
-                product.setQuantity(product.getQuantity() + quantity);
-                return true;
+                return product;
             }
         }
+        return null;
+    }
+
+    private void addPromotionProductQuantity(Product product, int quantity) {
+        if (product.getQuantity() < quantity) {
+            int remainingQuantity = quantity - product.getQuantity();
+            product.setQuantity(product.getQuantity() + remainingQuantity);
+            addProductQuantity(product.getName(), remainingQuantity);
+        }
+        product.setQuantity(product.getQuantity() + quantity);
+    }
+
+    private void addProductQuantity(String name, int quantity) {
         for (Product product : products) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + quantity);
-                return true;
+                return;
             }
         }
-        return false;
+        Product product = productRepository.findByName(name).get(0);
+        products.add(new Product(name, product.getPrice(), quantity, null));
     }
 
     private void validateInputFormat(String item) {
@@ -187,6 +214,10 @@ public class ShoppingCart {
         deductProductQuantity(productMap, promotionProducts);
     }
 
+    public ProductRepository getProductRepository() {
+        return productRepository;
+    }
+
     private void deductProductQuantity(Map<String, Product> productMap, List<Product> products) {
         for (Product product : products) {
             Product repositoryProduct = productMap.get(product.getName());
@@ -199,5 +230,16 @@ public class ShoppingCart {
                 }
             }
         }
+    }
+
+    public int getRemainStock(String name) {
+        int promotionStock = productRepository.findPromotionStockByName(name);
+
+        for (Product product : promotionProducts) {
+            if (product.getName().equals(name)) {
+                promotionStock -= product.getQuantity();
+            }
+        }
+        return promotionStock;
     }
 }

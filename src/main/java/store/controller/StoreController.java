@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class StoreController {
+    private static final String PROMOTIONS_FILE_PATH = "src/main/resources/promotions.md";
+    private static final String PRODUCTS_FILE_PATH = "src/main/resources/products.md";
     public static final int EMPTY = 0;
     private final OutputView outputView = new OutputView();
     private final InputView inputView = new InputView();
@@ -58,8 +60,8 @@ public class StoreController {
     private void set() {
         FileDataReader fileDataReader = new FileDataReader();
         try {
-            fileDataReader.loadPromotions("src/main/resources/promotions.md", promotionRepository);
-            fileDataReader.loadProducts("src/main/resources/products.md", productRepository, promotionRepository);
+            fileDataReader.loadPromotions(PROMOTIONS_FILE_PATH, promotionRepository);
+            fileDataReader.loadProducts(PRODUCTS_FILE_PATH, productRepository, promotionRepository);
         } catch (IOException e) {
             e.printStackTrace();
         }
