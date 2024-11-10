@@ -11,6 +11,7 @@ public class PromotionRepository {
     public void add(Promotion promotion) {
         promotions.put(promotion.getName(), promotion);
     }
+
     public Promotion findByName(String name) {
         return promotions.get(name);
     }

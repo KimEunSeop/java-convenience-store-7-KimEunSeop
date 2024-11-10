@@ -25,7 +25,7 @@ public class StoreController {
 
     public void start() {
         set();
-        while(true){
+        while (true) {
             pickItems();
             checkItems();
             calculate();
@@ -82,7 +82,7 @@ public class StoreController {
     }
 
     private boolean checkPurchaseAdditional() {
-        while(true){
+        while (true) {
             try {
                 outputView.printFinishGuide();
                 outputView.printYOrN();

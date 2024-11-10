@@ -74,12 +74,17 @@ public class OutputView {
         }
     }
 
-    private void printFinalAmount(int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice, int totalQuantity) {
+    private void printFinalAmount(
+            int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice, int totalQuantity) {
         System.out.println(OutputViewMessage.FINAL_AMOUNT_HEADER.getMessage());
-        System.out.println(String.format("%-12s\t%-6d\t%5s", OutputViewMessage.TOTAL_AMOUNT.getMessage(), totalQuantity, String.format("%,d", totalPrice)));
-        System.out.println(String.format("%-12s\t%14s", OutputViewMessage.PROMOTION_DISCOUNT.getMessage(), String.format("%,d", -promotionDiscount)));
-        System.out.println(String.format("%-12s\t%14s", OutputViewMessage.MEMBERSHIP_DISCOUNT.getMessage(), String.format("%,d", -membershipDiscount)));
-        System.out.println(String.format("%-12s\t%14s", OutputViewMessage.FINAL_PRICE.getMessage(), String.format("%,d", finalPrice)));
+        System.out.println(String.format("%-12s\t%-6d\t%5s",
+                OutputViewMessage.TOTAL_AMOUNT.getMessage(), totalQuantity, String.format("%,d", totalPrice)));
+        System.out.println(String.format("%-12s\t%14s",
+                OutputViewMessage.PROMOTION_DISCOUNT.getMessage(), String.format("%,d", -promotionDiscount)));
+        System.out.println(String.format("%-12s\t%14s",
+                OutputViewMessage.MEMBERSHIP_DISCOUNT.getMessage(), String.format("%,d", -membershipDiscount)));
+        System.out.println(String.format("%-12s\t%14s",
+                OutputViewMessage.FINAL_PRICE.getMessage(), String.format("%,d", finalPrice)));
     }
 
     public void printFinishGuide() {

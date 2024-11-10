@@ -30,7 +30,7 @@ public class PromotionChecker {
         int missedItemCount = calculateMissedItemCount(product.getQuantity(), product.getPromotion());
         int stock = shoppingCart.getRemainPromotionProductStock(product.getName());
         if (missedItemCount > 0 && stock != 0) {
-            if(missedItemCount <= stock){
+            if (missedItemCount <= stock) {
                 missedItems.put(product.getName(), missedItemCount);
                 return;
             }
@@ -108,7 +108,7 @@ public class PromotionChecker {
             int buyCount = product.getPromotion().getBuyCount();
             int getCount = product.getPromotion().getGetCount();
             int freeCount = ((product.getQuantity() / (buyCount + getCount)) * getCount);
-            if(product.getQuantity() % (buyCount + getCount) >  buyCount){
+            if (product.getQuantity() % (buyCount + getCount) > buyCount) {
                 freeCount += ((product.getQuantity() % (buyCount + getCount)) - buyCount);
             }
             freeItems.put(product.getName(), freeCount);
