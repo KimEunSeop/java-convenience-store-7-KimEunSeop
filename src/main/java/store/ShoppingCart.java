@@ -53,7 +53,6 @@ public class ShoppingCart {
                 product.setQuantity(product.getQuantity() - exceedQuantity);
             }
         }
-
         for (Product product : products) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + exceedQuantity);
@@ -68,7 +67,6 @@ public class ShoppingCart {
                 return true;
             }
         }
-
         for (Product product : products) {
             if (product.getName().equals(name)) {
                 product.setQuantity(product.getQuantity() + quantity);

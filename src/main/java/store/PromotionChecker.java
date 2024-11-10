@@ -64,7 +64,7 @@ public class PromotionChecker {
     }
 
     private int calculateMissedItemCount(int buyCount, Promotion promotion) {
-        if (((buyCount % (promotion.getBuyCount() + promotion.getGetCount())) - promotion.getBuyCount()) > 0) {
+        if (((buyCount % (promotion.getBuyCount() + promotion.getGetCount())) - promotion.getBuyCount()) >= 0) {
             int missedItemCount = promotion.getGetCount()
                     - ((buyCount % (promotion.getBuyCount() + promotion.getGetCount()))
                     - promotion.getBuyCount());
