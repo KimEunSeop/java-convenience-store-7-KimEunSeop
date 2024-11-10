@@ -78,4 +78,8 @@ public class OutputView {
         System.out.printf("%-10s\t%-6d\t%-10d\n", "멤버십 할인", -membershipDiscount, -membershipDiscount);
         System.out.printf("%-10s\t%-6d\t%-10d\n", "내실 돈", finalAmount, finalAmount);
     }
+
+    public void printFinsihGuide() {
+        System.out.println("감사합니다. 구매하고 싶은 다른 상품이 있나요?");
+    }
 }

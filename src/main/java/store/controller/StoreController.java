@@ -28,21 +28,49 @@ public class StoreController {
 
     public void start() {
         set();
-        outputView.printWelcomeGuide();
-        outputView.printItemList(productRepository.getProductsAsString());
-        process(this::inputShoppingCart);
-        promotionChecker = new PromotionChecker(shoppingCart);
-        if (promotionChecker.findMissedItems().size() != EMPTY) {
-            process(this::inputMissedItem);
+        while(true){
+            outputView.printWelcomeGuide();
+            outputView.printItemList(productRepository.getProductsAsString());
+            process(this::inputShoppingCart);
+            promotionChecker = new PromotionChecker(shoppingCart);
+            if (promotionChecker.findMissedItems().size() != EMPTY) {
+                process(this::inputMissedItem);
+            }
+            if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
+                process(this::inputExclude);
+            }
+            priceCalculator = new PriceCalculator(shoppingCart);
+            priceCalculator.calculateTotal();
+            priceCalculator.calculatePromotions();
+            process(this::inputMembership);
+            buy();
+            if (!checkPurchaseAdditional()) {
+                break;
+            }
         }
-        if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
-            process(this::inputExclude);
+    }
+
+    private boolean checkPurchaseAdditional() {
+        while(true){
+            try {
+                outputView.printFinsihGuide();
+                outputView.printYOrN();
+                return checkInput();
+            } catch (IllegalArgumentException e) {
+                outputView.printErrorMessage(e.getMessage());
+            }
         }
-        priceCalculator = new PriceCalculator(shoppingCart);
-        priceCalculator.calculateTotal();
-        priceCalculator.calculatePromotions();
-        process(this::inputMembership);
-        buy();
+    }
+
+    private boolean checkInput() {
+        String answer = inputView.getResponse();
+        if ("Y".equalsIgnoreCase(answer)) {
+            return true;
+        }
+        if ("N".equalsIgnoreCase(answer)) {
+            return false;
+        }
+        throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
     }
 
     private void buy() {

@@ -210,15 +210,11 @@ public class ShoppingCart {
             productMap.put(repoProduct.getName(), repoProduct);
         }
 
-        deductProductQuantity(productMap, products);
-        deductProductQuantity(productMap, promotionProducts);
+        buyProduct(productMap, products);
+        buyProduct(productMap, promotionProducts);
     }
 
-    public ProductRepository getProductRepository() {
-        return productRepository;
-    }
-
-    private void deductProductQuantity(Map<String, Product> productMap, List<Product> products) {
+    private void buyProduct(Map<String, Product> productMap, List<Product> products) {
         for (Product product : products) {
             Product repositoryProduct = productMap.get(product.getName());
 
