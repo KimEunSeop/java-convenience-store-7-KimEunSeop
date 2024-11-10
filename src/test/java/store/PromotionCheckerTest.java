@@ -70,7 +70,7 @@ class PromotionCheckerTest {
     }
 
     @Test
-    void Y_입력시_무료_상품_장바구니에_추가() {
+    void 놓친_증정품_있을_때_Y_입력시_무료_상품_장바구니에_추가() {
         productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
         productRepository.add(new Product("콜라", 1000, 10, null));
 
@@ -89,7 +89,7 @@ class PromotionCheckerTest {
     }
 
     @Test
-    void N_입력시_아무것도_추가되지않음() {
+    void 놓친_증정품_있을_때_N_입력시_아무것도_추가되지않음() {
         productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
         productRepository.add(new Product("콜라", 1000, 10, null));
 
@@ -107,7 +107,7 @@ class PromotionCheckerTest {
     }
 
     @Test
-    void 잘못된_입력시_예외발생() {
+    void 놓친_증정품_있을_때_잘못된_입력시_예외발생() {
         productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
         productRepository.add(new Product("콜라", 1000, 10, null));
 
@@ -117,6 +117,71 @@ class PromotionCheckerTest {
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             promotionChecker.checkMissedItemsResponse("Z");
+        });
+
+        assertEquals("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.", exception.getMessage());
+    }
+
+    @Test
+    void 프로모션_재고_초과_시_Y_입력시_무료_상품_장바구니에_추가() {
+        productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
+        productRepository.add(new Product("콜라", 1000, 10, null));
+
+        String input = "[콜라-12]";
+        shoppingCart = new ShoppingCart(input, productRepository);
+        promotionChecker = new PromotionChecker(shoppingCart);
+
+        promotionChecker.checkExceedItemsResponse("Y");
+
+
+        for (Product product : shoppingCart.getPromotionProducts()) {
+            if (product.getName().equals("콜라")) {
+                assertEquals(9, product.getQuantity());
+            }
+        }
+        for (Product product : shoppingCart.getProducts()) {
+            if (product.getName().equals("콜라")) {
+                assertEquals(3, product.getQuantity());
+            }
+        }
+    }
+
+    @Test
+    void 프로모션_재고_초과_시_N_입력시_아무것도_추가되지않음() {
+        productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
+        productRepository.add(new Product("콜라", 1000, 10, null));
+
+        String input = "[콜라-12]";
+        shoppingCart = new ShoppingCart(input, productRepository);
+        promotionChecker = new PromotionChecker(shoppingCart);
+
+        promotionChecker.checkExceedItemsResponse("N");
+
+        for (Product product : shoppingCart.getPromotionProducts()) {
+            if (product.getName().equals("콜라")) {
+                assertEquals(9, product.getQuantity());
+            }
+        }
+        for (Product product : shoppingCart.getProducts()) {
+            if (product.getName().equals("콜라")) {
+                 assertEquals(0, product.getQuantity());
+            }
+        }
+    }
+
+    @Test
+    void 프로모션_재고_초과_시_잘못된_입력시_예외발생() {
+        productRepository.add(new Product("콜라", 1000, 10, new Promotion("2+1", 2, 1, "2024-01-01", "2024-12-31")));
+        productRepository.add(new Product("콜라", 1000, 10, null));
+
+        String input = "[콜라-12]";
+        shoppingCart = new ShoppingCart(input, productRepository);
+        promotionChecker = new PromotionChecker(shoppingCart);
+
+        promotionChecker.checkMissedItemsResponse("Y");
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            promotionChecker.checkExceedItemsResponse("z");
         });
 
         assertEquals("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.", exception.getMessage());

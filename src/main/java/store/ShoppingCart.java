@@ -42,6 +42,7 @@ public class ShoppingCart {
         for (Product product : inputProducts) {
             if (product.getPromotion() != null) {
                 promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+                break;
             }
             products.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
         }
@@ -109,5 +110,13 @@ public class ShoppingCart {
 
     public ProductRepository getProductRepository() {
         return productRepository;
+    }
+
+    public void substractPromotionProduct(String name, Integer exceedQuantity) {
+        for (Product product : promotionProducts) {
+            if (product.getName().equals(name)) {
+                product.setQuantity(product.getQuantity() - exceedQuantity);
+            }
+        }
     }
 }

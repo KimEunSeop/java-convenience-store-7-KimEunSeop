@@ -4,9 +4,7 @@ import store.model.Product;
 import store.model.Promotion;
 import store.repository.ProductRepository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PromotionChecker {
@@ -94,6 +92,10 @@ public class PromotionChecker {
             return;
         }
         if ("N".equalsIgnoreCase(input)) {
+            for (String name : exceedItems.keySet()) {
+                shoppingCart.substractPromotionProduct(name, exceedItems.get(name));
+            }
+            System.out.println(shoppingCart.getPromotionProducts().get(0).getName() + shoppingCart.getPromotionProducts().get(0).getQuantity());
             return;
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
