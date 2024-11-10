@@ -1,6 +1,7 @@
 package store.controller;
 
 import store.FileDataReader;
+import store.PriceCalculator;
 import store.PromotionChecker;
 import store.ShoppingCart;
 import store.repository.ProductRepository;
@@ -19,7 +20,8 @@ public class StoreController {
     private final PromotionRepository promotionRepository = new PromotionRepository();
     private final ProductRepository productRepository = new ProductRepository();
     private ShoppingCart shoppingCart;
-    PromotionChecker promotionChecker;
+    private PromotionChecker promotionChecker;
+    private PriceCalculator priceCalculator;
 
     public void start() {
         set();
@@ -33,9 +35,10 @@ public class StoreController {
         if (promotionChecker.checkPromotionQuantity(productRepository).size() != EMPTY) {
             process(this::inputExclude);
         }
+        priceCalculator = new PriceCalculator(shoppingCart);
+        process(this::inputMembership);
 
     }
-
 
     private void set() {
         FileDataReader fileDataReader = new FileDataReader();
@@ -82,6 +85,17 @@ public class StoreController {
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputExclude);
+        }
+    }
+
+    private void inputMembership() {
+        try {
+            outputView.printMembershipDiscountGuide();
+            outputView.printYOrN();
+            priceCalculator.calculatemembershipDiscount(inputView.getResponse());
+        } catch (IllegalArgumentException e) {
+            outputView.printErrorMessage(e.getMessage());
+            process(this::inputShoppingCart);
         }
     }
 

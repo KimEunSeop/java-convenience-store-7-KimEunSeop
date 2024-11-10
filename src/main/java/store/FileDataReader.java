@@ -15,7 +15,7 @@ public class FileDataReader {
 
     public static void loadPromotions(String filename, PromotionRepository promotionRepository) throws IOException {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
-            bufferedReader.readLine(); // 헤더 라인 건너뛰기
+            bufferedReader.readLine();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 Promotion promotion = parsePromotion(line);
@@ -51,7 +51,7 @@ public class FileDataReader {
             String filename, ProductRepository productRepository, PromotionRepository promotionRepository
     ) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            br.readLine(); // 헤더 라인 건너뛰기
+            br.readLine();
             String line;
             while ((line = br.readLine()) != null) {
                 Product product = parseProduct(line, promotionRepository);
@@ -74,7 +74,7 @@ public class FileDataReader {
         if (promotionName != null && !promotionName.isEmpty()) {
             return promotionRepository.findByName(promotionName);
         } else {
-            return null; // 프로모션이 없는 경우 null을 반환
+            return null;
         }
     }
 }
