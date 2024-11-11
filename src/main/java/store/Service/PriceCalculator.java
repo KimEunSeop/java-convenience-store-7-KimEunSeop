@@ -1,10 +1,12 @@
 package store.Service;
 
+import store.ErrorMessage;
 import store.model.Product;
 
 public class PriceCalculator {
 
-    public static final double MEMBERSHIP_DISCOUNT_PERSENTAGE = 0.3;
+    public static final String YES = "Y";
+    public static final String NO = "N";
     private final ShoppingCart shoppingCart;
     private int totalPrice = 0;
     private int promotionDiscount = 0;
@@ -38,15 +40,14 @@ public class PriceCalculator {
     }
 
     public void calculatemembershipDiscount(String input) {
-        if ("Y".equalsIgnoreCase(input)) {
+        if (YES.equalsIgnoreCase(input)) {
             calculatemembershipDiscount();
             return;
         }
-        if ("N".equalsIgnoreCase(input)) {
+        if (NO.equalsIgnoreCase(input)) {
             return;
         }
-        throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
-
+        throw new IllegalArgumentException(ErrorMessage.INVALID_Y_OR_N_INPUT.getMessage());
     }
 
     private void calculatemembershipDiscount() {
@@ -56,9 +57,9 @@ public class PriceCalculator {
             int getCount = promotionProduct.getPromotion().getGetCount();
             promotionPrice += ((promotionProduct.getQuantity() / (buyCount + getCount)) * (buyCount + getCount)) * promotionProduct.getPrice();
         }
-        membershipDiscount = (int) ((totalPrice - promotionPrice) * MEMBERSHIP_DISCOUNT_PERSENTAGE);
-        if (membershipDiscount > 8000) {
-            membershipDiscount = 8000;
+        membershipDiscount = (int) ((totalPrice - promotionPrice) * MemberShip.STANDARD.getDiscountPercentage());
+        if (membershipDiscount > MemberShip.STANDARD.getMaxDiscount()) {
+            membershipDiscount = MemberShip.STANDARD.getMaxDiscount();
         }
     }
 
