@@ -36,14 +36,16 @@ public class OutputView {
     }
 
     public void printExcludeGuide(String productName, Integer exceedQuantity) {
-        System.out.println(String.format(OutputViewMessage.EXCEED_PROMOTION_GUIDE.getMessage(), productName, exceedQuantity));
+        System.out.println(String.format(
+                OutputViewMessage.EXCEED_PROMOTION_GUIDE.getMessage(), productName, exceedQuantity));
     }
 
     public void printMembershipDiscountGuide() {
         System.out.println(OutputViewMessage.MEMBERSHIP_DISCOUNT_GUIDE.getMessage());
     }
 
-    public void printReceipt(Map<String, Integer> freeItems, List<Product> products, int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice) {
+    public void printReceipt(Map<String, Integer> freeItems, List<Product> products,
+                             int totalPrice, int promotionDiscount, int membershipDiscount, int finalPrice) {
         System.out.println(OutputViewMessage.RECEIPT_HEADER.getMessage());
         printProductList(products);
 

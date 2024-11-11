@@ -15,14 +15,18 @@ import java.time.format.DateTimeFormatter;
 
 public class FileDataReader {
 
-    public static void loadPromotions(String filename, PromotionRepository promotionRepository) throws IOException {
+    public static void loadPromotions(
+            String filename, PromotionRepository promotionRepository) throws IOException
+    {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             bufferedReader.readLine();
             analyzeLine(promotionRepository, bufferedReader);
         }
     }
 
-    private static void analyzeLine(PromotionRepository promotionRepository, BufferedReader bufferedReader) throws IOException {
+    private static void analyzeLine(
+            PromotionRepository promotionRepository, BufferedReader bufferedReader) throws IOException
+    {
         String line;
         while ((line = bufferedReader.readLine()) != null) {
             Promotion promotion = parsePromotion(line);
@@ -54,7 +58,10 @@ public class FileDataReader {
         );
     }
 
-    public static void loadProducts(String filename, ProductRepository productRepository, PromotionRepository promotionRepository) throws IOException {
+    public static void loadProducts(
+            String filename, ProductRepository productRepository, PromotionRepository promotionRepository)
+            throws IOException
+    {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             br.readLine();
             String line;
@@ -65,7 +72,8 @@ public class FileDataReader {
     }
 
     private static void parseAndAddProduct(
-            String line, ProductRepository productRepository, PromotionRepository promotionRepository) {
+            String line, ProductRepository productRepository, PromotionRepository promotionRepository)
+    {
         String[] fields = line.split(",");
         String name = fields[0].trim();
         int price = Integer.parseInt(fields[1].trim());

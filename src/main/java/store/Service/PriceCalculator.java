@@ -54,14 +54,13 @@ public class PriceCalculator {
     private void calculatemembershipDiscount() {
         int promotionPrice = 0;
         for (Product promotionProduct : shoppingCart.getPromotionProducts()) {
-            int buyCount = promotionProduct.getPromotion().getBuyCount();
-            int getCount = promotionProduct.getPromotion().getGetCount();
-            promotionPrice += ((promotionProduct.getQuantity() / (buyCount + getCount)) * (buyCount + getCount)) * promotionProduct.getPrice();
+            int totalUnits = promotionProduct.getPromotion().getBuyCount()
+                    + promotionProduct.getPromotion().getGetCount();
+            promotionPrice += (promotionProduct.getQuantity() / totalUnits) * totalUnits * promotionProduct.getPrice();
         }
-        membershipDiscount = (int) ((totalPrice - promotionPrice) * MemberShip.STANDARD.getDiscountPercentage());
-        if (membershipDiscount > MemberShip.STANDARD.getMaxDiscount()) {
-            membershipDiscount = MemberShip.STANDARD.getMaxDiscount();
-        }
+        int discountLimit = MemberShip.STANDARD.getMaxDiscount();
+        membershipDiscount = Math.min((int) ((totalPrice - promotionPrice)
+                * MemberShip.STANDARD.getDiscountPercentage()), discountLimit);
     }
 
     public int getTotalPrice() {

@@ -82,9 +82,9 @@ public class ShoppingCart {
             int remainingQuantity = quantity - currentQuantity;
             addProductQuantity(product.getName(), remainingQuantity);
             product.setQuantity(quantity);
-        } else {
-            product.setQuantity(currentQuantity + quantity);
+            return;
         }
+        product.setQuantity(currentQuantity + quantity);
     }
 
     private void addProductQuantity(String name, int quantity) {
@@ -164,7 +164,7 @@ public class ShoppingCart {
 
     private void combineProducts(List<Product> products, List<Product> totalProducts) {
         for (Product product : products) {
-            totalProducts.add(new Product(product.getName(), product.getPrice(), product.getQuantity(), null));
+            totalProducts.add(createProduct(product));
         }
     }
 
@@ -181,7 +181,16 @@ public class ShoppingCart {
                 return;
             }
         }
-        totalProducts.add(new Product(promotionProduct.getName(), promotionProduct.getPrice(), promotionProduct.getQuantity(), null));
+        totalProducts.add(createProduct(promotionProduct));
+    }
+
+    private Product createProduct(Product product) {
+        return new Product(
+                product.getName(),
+                product.getPrice(),
+                product.getQuantity(),
+                null
+        );
     }
 
     public int getRemainPromotionProductStock(String name) {
