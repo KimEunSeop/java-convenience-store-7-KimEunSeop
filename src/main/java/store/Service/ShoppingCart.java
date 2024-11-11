@@ -12,9 +12,12 @@ public class ShoppingCart {
     private List<Product> products = new ArrayList<>();
     private List<Product> promotionProducts = new ArrayList<>();
     private final ProductRepository productRepository;
+    private final Counter counter;
+
 
     public ShoppingCart(String input, ProductRepository productRepository) {
         this.productRepository = productRepository;
+        this.counter = new Counter(productRepository);
         set(input);
     }
 
@@ -53,17 +56,6 @@ public class ShoppingCart {
         }
         products.add(new Product(name, inputProducts.get(0).getPrice(), quantity, null));
     }
-
-    public List<Product> removeEmptyProducts(List<Product> products) {
-        List<Product> nonEmptyProducts = new ArrayList<>();
-        for (Product product : products) {
-            if (product.getQuantity() > 0) {
-                nonEmptyProducts.add(product);
-            }
-        }
-        return nonEmptyProducts;
-    }
-
 
     private boolean hasProduct(String name, int quantity) {
         Product product = findProduct(promotionProducts, name);
@@ -163,14 +155,6 @@ public class ShoppingCart {
         }
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public List<Product> getPromotionProducts() {
-        return promotionProducts;
-    }
-
     public List<Product> getAllProducts() {
         List<Product> totalProducts = new ArrayList<>();
 
@@ -188,11 +172,11 @@ public class ShoppingCart {
 
     private void combinePromotionProducts(List<Product> promotionProducts, List<Product> totalProducts) {
         for (Product promotionProduct : promotionProducts) {
-            update(promotionProduct, totalProducts);
+            updatePromotionProducts(promotionProduct, totalProducts);
         }
     }
 
-    private void update(Product promotionProduct, List<Product> totalProducts) {
+    private void updatePromotionProducts(Product promotionProduct, List<Product> totalProducts) {
         for (Product product : totalProducts) {
             if (product.getName().equals(promotionProduct.getName())) {
                 product.setQuantity(product.getQuantity() + promotionProduct.getQuantity());
@@ -203,43 +187,23 @@ public class ShoppingCart {
     }
 
     public int getRemainPromotionProductStock(String name) {
-        int promotionProductStock = productRepository.findPromotionProductStockByName(name);
-
-        for (Product product : promotionProducts) {
-            if (product.getName().equals(name)) {
-                promotionProductStock -= product.getQuantity();
-            }
-        }
-        return promotionProductStock;
+        return counter.getRemainPromotionProductStock(name, promotionProducts);
     }
 
     public int getRemainProductStock(String name) {
-        int productStock = productRepository.findProductStockByName(name);
-
-        for (Product product : products) {
-            if (product.getName().equals(name)) {
-                productStock -= product.getQuantity();
-            }
-        }
-        return productStock;
+        return counter.getRemainProductStock(name, products);
     }
 
     public void buy() {
-        buyPromotionProducts();
-        buyProducts();
+        counter.buyPromotionProducts(promotionProducts);
+        counter.buyProducts(products);
     }
 
-    private void buyPromotionProducts() {
-        for (Product promotionProduct : promotionProducts) {
-            Product repositoryProduct = productRepository.findPromotionProductByName(promotionProduct.getName());
-            repositoryProduct.setQuantity(getRemainPromotionProductStock(promotionProduct.getName()));
-        }
+    public List<Product> getProducts() {
+        return products;
     }
 
-    private void buyProducts() {
-        for (Product product : products) {
-            Product repositoryProduct = productRepository.findProductByName(product.getName());
-            repositoryProduct.setQuantity(getRemainProductStock(product.getName()));
-        }
+    public List<Product> getPromotionProducts() {
+        return promotionProducts;
     }
 }
