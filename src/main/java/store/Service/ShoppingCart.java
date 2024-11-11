@@ -14,7 +14,6 @@ public class ShoppingCart {
     private final ProductRepository productRepository;
     private final Counter counter;
 
-
     public ShoppingCart(String input, ProductRepository productRepository) {
         this.productRepository = productRepository;
         this.counter = new Counter(productRepository);
@@ -58,12 +57,12 @@ public class ShoppingCart {
     }
 
     private boolean hasProduct(String name, int quantity) {
-        Product product = findProduct(promotionProducts, name);
+        Product product = counter.findProduct(promotionProducts, name);
         if (product != null) {
             addPromotionProductQuantity(product, quantity);
             return true;
         }
-        product = findProduct(products, name);
+        product = counter.findProduct(products, name);
         if (product != null) {
             product.setQuantity(product.getQuantity() + quantity);
             return true;
@@ -89,15 +88,6 @@ public class ShoppingCart {
         }
         Product product = productRepository.findByName(name).get(0);
         products.add(new Product(name, product.getPrice(), quantity, null));
-    }
-
-    private Product findProduct(List<Product> productList, String name) {
-        for (Product product : productList) {
-            if (product.getName().equals(name)) {
-                return product;
-            }
-        }
-        return null;
     }
 
     private void validateInputFormat(String item) {
@@ -132,26 +122,26 @@ public class ShoppingCart {
 
     public int subtractProducts(String name, Integer excludeQuantity) {
         for (Product product : products) {
-            if (product.getName().equals(name)) {
-                int currentQuantity = product.getQuantity();
-                int deductedQuantity = Math.min(currentQuantity, excludeQuantity);
-                product.setQuantity(currentQuantity - deductedQuantity);
-                excludeQuantity -= deductedQuantity;
-                if (excludeQuantity == 0) return 0;
-            }
+            if (!product.getName().equals(name)) continue;
+
+            int deductedQuantity = Math.min(product.getQuantity(), excludeQuantity);
+            product.setQuantity(product.getQuantity() - deductedQuantity);
+            excludeQuantity -= deductedQuantity;
+
+            if (excludeQuantity == 0) return 0;
         }
         return excludeQuantity;
     }
 
     public void subtractPromotionProducts(String name, Integer excludeQuantity) {
         for (Product product : promotionProducts) {
-            if (product.getName().equals(name)) {
-                int currentQuantity = product.getQuantity();
-                int deductedQuantity = Math.min(currentQuantity, excludeQuantity);
-                product.setQuantity(currentQuantity - deductedQuantity);
-                excludeQuantity -= deductedQuantity;
-                if (excludeQuantity == 0) return;
-            }
+            if (!product.getName().equals(name)) continue;
+
+            int deductedQuantity = Math.min(product.getQuantity(), excludeQuantity);
+            product.setQuantity(product.getQuantity() - deductedQuantity);
+            excludeQuantity -= deductedQuantity;
+
+            if (excludeQuantity == 0) return;
         }
     }
 

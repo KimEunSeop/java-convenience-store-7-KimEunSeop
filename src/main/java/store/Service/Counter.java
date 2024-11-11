@@ -47,4 +47,13 @@ public class Counter {
             repositoryProduct.setQuantity(getRemainProductStock(product.getName(), products));
         }
     }
+
+    public Product findProduct(List<Product> productList, String name) {
+        for (Product product : productList) {
+            if (product.getName().equals(name)) {
+                return product;
+            }
+        }
+        return null;
+    }
 }
