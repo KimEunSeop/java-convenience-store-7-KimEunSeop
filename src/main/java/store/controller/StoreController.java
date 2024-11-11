@@ -61,7 +61,7 @@ public class StoreController {
         if (promotionService.findMissedItems().size() != EMPTY) {
             process(this::inputMissedItem);
         }
-        if (promotionService.checkPromotionQuantity(productRepository).size() != EMPTY) {
+        if (promotionService.checkExclude(productRepository).size() != EMPTY) {
             process(this::inputExclude);
         }
     }
@@ -134,12 +134,12 @@ public class StoreController {
 
     private void inputExclude() {
         try {
-            Map<String, Integer> exceedItems = promotionService.checkPromotionQuantity(productRepository);
-            for (String key : exceedItems.keySet()) {
-                outputView.printExcludeGuide(key, exceedItems.get(key));
+            Map<String, Integer> excludeItems = promotionService.checkExclude(productRepository);
+            for (String key : excludeItems.keySet()) {
+                outputView.printExcludeGuide(key, excludeItems.get(key));
                 outputView.printYOrN();
             }
-            promotionService.checkExceedItemsResponse(inputView.getResponse());
+            promotionService.checkExcludeItemsResponse(inputView.getResponse());
         } catch (IllegalArgumentException e) {
             outputView.printErrorMessage(e.getMessage());
             process(this::inputExclude);

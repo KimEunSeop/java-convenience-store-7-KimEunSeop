@@ -12,7 +12,7 @@ public class PromotionService {
 
     private ShoppingCart shoppingCart;
     private Map<String, Integer> missedItems = new HashMap<>();
-    private Map<String, Integer> exceedItems = new HashMap<>();
+    private Map<String, Integer> excludeItems = new HashMap<>();
     private Map<String, Integer> freeItems = new HashMap<>();
 
     public PromotionService(ShoppingCart shoppingCart) {
@@ -62,11 +62,11 @@ public class PromotionService {
         throw new IllegalArgumentException(ErrorMessage.INVALID_Y_OR_N_INPUT.getMessage());
     }
 
-    public Map<String, Integer> checkPromotionQuantity(ProductRepository productRepository) {
+    public Map<String, Integer> checkExclude(ProductRepository productRepository) {
         for (Product product : shoppingCart.getPromotionProducts()) {
             checkQuantity(product, productRepository);
         }
-        return exceedItems;
+        return excludeItems;
     }
 
     private void checkQuantity(Product checkProduct, ProductRepository productRepository) {
@@ -76,28 +76,29 @@ public class PromotionService {
                 quantityLimit = product.getQuantity();
             }
         }
-        if (checkProduct.getQuantity() > quantityLimit) {
-            int exceedQuantity = calculateMaxQuantity(checkProduct, quantityLimit);
-            exceedItems.put(checkProduct.getName(), exceedQuantity);
+        if (checkProduct.getQuantity() == quantityLimit) {
+            int excludeQuantity = calculateExcludeQuantity(checkProduct);
+            excludeItems.put(checkProduct.getName(), excludeQuantity);
         }
     }
 
-    private int calculateMaxQuantity(Product product, int quantityLimit) {
-        int buyCount = product.getPromotion().getBuyCount();
-        int getCount = product.getPromotion().getGetCount();
-        return (product.getQuantity() - ((quantityLimit / (buyCount + getCount)) * (buyCount + getCount)));
+    private int calculateExcludeQuantity(Product checkProduct) {
+        int excludePromotionProductQuality = checkProduct.getQuantity() % (checkProduct.getPromotion().getGetCount() + checkProduct.getPromotion().getBuyCount());
+        for (Product product : shoppingCart.getProducts()) {
+            if (checkProduct.getName().equals(product.getName())) {
+                excludePromotionProductQuality += product.getQuantity();
+            }
+        }
+        return excludePromotionProductQuality;
     }
 
-    public void checkExceedItemsResponse(String input) {
+    public void checkExcludeItemsResponse(String input) {
         if ("Y".equalsIgnoreCase(input)) {
-            for (String name : exceedItems.keySet()) {
-                shoppingCart.changeProduct(name, exceedItems.get(name));
-            }
             return;
         }
         if ("N".equalsIgnoreCase(input)) {
-            for (String name : exceedItems.keySet()) {
-                shoppingCart.substractPromotionProduct(name, exceedItems.get(name));
+            for (String name : excludeItems.keySet()) {
+                shoppingCart.subtractProduct(name, excludeItems.get(name));
             }
             return;
         }

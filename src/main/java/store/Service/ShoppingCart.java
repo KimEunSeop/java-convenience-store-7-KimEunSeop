@@ -155,10 +155,34 @@ public class ShoppingCart {
         }
     }
 
-    public void substractPromotionProduct(String name, Integer exceedQuantity) {
+    public void subtractProduct(String name, Integer excludeQuantity) {
+        int remainingQuantity = subtractProducts(name, excludeQuantity);
+        if (remainingQuantity > 0) {
+            subtractPromotionProducts(name, remainingQuantity);
+        }
+    }
+
+    public int subtractProducts(String name, Integer excludeQuantity) {
+        for (Product product : products) {
+            if (product.getName().equals(name)) {
+                int currentQuantity = product.getQuantity();
+                int deductedQuantity = Math.min(currentQuantity, excludeQuantity);
+                product.setQuantity(currentQuantity - deductedQuantity);
+                excludeQuantity -= deductedQuantity;
+                if (excludeQuantity == 0) return 0;
+            }
+        }
+        return excludeQuantity;
+    }
+
+    public void subtractPromotionProducts(String name, Integer excludeQuantity) {
         for (Product product : promotionProducts) {
             if (product.getName().equals(name)) {
-                product.setQuantity(product.getQuantity() - exceedQuantity);
+                int currentQuantity = product.getQuantity();
+                int deductedQuantity = Math.min(currentQuantity, excludeQuantity);
+                product.setQuantity(currentQuantity - deductedQuantity);
+                excludeQuantity -= deductedQuantity;
+                if (excludeQuantity == 0) return;
             }
         }
     }

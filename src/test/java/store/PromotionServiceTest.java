@@ -126,8 +126,8 @@ class PromotionServiceTest {
         String input = "[콜라-12]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionService = new PromotionService(shoppingCart);
-        promotionService.checkPromotionQuantity(productRepository);
-        promotionService.checkExceedItemsResponse("Y");
+        promotionService.checkExclude(productRepository);
+        promotionService.checkExcludeItemsResponse("Y");
 
 
         for (Product product : shoppingCart.getPromotionProducts()) {
@@ -150,8 +150,8 @@ class PromotionServiceTest {
         String input = "[콜라-8]";
         shoppingCart = new ShoppingCart(input, productRepository);
         promotionService = new PromotionService(shoppingCart);
-        promotionService.checkPromotionQuantity(productRepository);
-        promotionService.checkExceedItemsResponse("N");
+        promotionService.checkExclude(productRepository);
+        promotionService.checkExcludeItemsResponse("N");
 
         for (Product product : shoppingCart.getPromotionProducts()) {
             if (product.getName().equals("콜라")) {
@@ -172,7 +172,7 @@ class PromotionServiceTest {
         promotionService.checkMissedItemsResponse("Y");
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            promotionService.checkExceedItemsResponse("z");
+            promotionService.checkExcludeItemsResponse("z");
         });
 
         assertEquals("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.", exception.getMessage());
