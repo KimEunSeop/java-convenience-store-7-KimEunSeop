@@ -8,6 +8,9 @@ import store.repository.ProductRepository;
 import java.util.HashMap;
 import java.util.Map;
 
+import static store.Application.NO;
+import static store.Application.YES;
+
 public class PromotionService {
 
     private ShoppingCart shoppingCart;
@@ -50,13 +53,13 @@ public class PromotionService {
     }
 
     public void checkMissedItemsResponse(String input) {
-        if ("Y".equalsIgnoreCase(input)) {
+        if (YES.equalsIgnoreCase(input)) {
             for (String name : missedItems.keySet()) {
                 shoppingCart.addProduct(name, missedItems.get(name));
             }
             return;
         }
-        if ("N".equalsIgnoreCase(input)) {
+        if (NO.equalsIgnoreCase(input)) {
             return;
         }
         throw new IllegalArgumentException(ErrorMessage.INVALID_Y_OR_N_INPUT.getMessage());
@@ -70,19 +73,20 @@ public class PromotionService {
     }
 
     private void checkQuantity(Product checkProduct, ProductRepository productRepository) {
-        int quantityLimit = 0;
-        for (Product product : productRepository.findByName(checkProduct.getName())) {
-            if (product.getPromotion() != null) {
-                quantityLimit = product.getQuantity();
-            }
-        }
-        if (checkProduct.getQuantity() == quantityLimit) {
-            int excludeQuantity = calculateExcludeQuantity(checkProduct);
-            if (excludeQuantity == 0) {
-                return;
-            }
+        int quantityLimit = getQuantityLimit(checkProduct, productRepository);
+        if (checkProduct.getQuantity() != quantityLimit) return;
+
+        int excludeQuantity = calculateExcludeQuantity(checkProduct);
+        if (excludeQuantity > 0) {
             excludeItems.put(checkProduct.getName(), excludeQuantity);
         }
+    }
+
+    private int getQuantityLimit(Product checkProduct, ProductRepository productRepository) {
+        for (Product product : productRepository.findByName(checkProduct.getName())) {
+            if (product.getPromotion() != null) return product.getQuantity();
+        }
+        return 0;
     }
 
     private int calculateExcludeQuantity(Product checkProduct) {
@@ -99,10 +103,10 @@ public class PromotionService {
     }
 
     public void checkExcludeItemsResponse(String input) {
-        if ("Y".equalsIgnoreCase(input)) {
+        if (YES.equalsIgnoreCase(input)) {
             return;
         }
-        if ("N".equalsIgnoreCase(input)) {
+        if (NO.equalsIgnoreCase(input)) {
             for (String name : excludeItems.keySet()) {
                 shoppingCart.subtractProduct(name, excludeItems.get(name));
             }

@@ -3,10 +3,11 @@ package store.Service;
 import store.ErrorMessage;
 import store.model.Product;
 
+import static store.Application.NO;
+import static store.Application.YES;
+
 public class PriceCalculator {
 
-    public static final String YES = "Y";
-    public static final String NO = "N";
     private final ShoppingCart shoppingCart;
     private int totalPrice = 0;
     private int promotionDiscount = 0;

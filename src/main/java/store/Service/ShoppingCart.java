@@ -40,43 +40,51 @@ public class ShoppingCart {
 
     public void addProduct(String name, int quantity) {
         if (hasProduct(name, quantity)) return;
+
         List<Product> inputProducts = productRepository.findByName(name);
         for (Product product : inputProducts) {
-            if (product.getPromotion() == null) {
-                continue;
-            }
-            if (product.getQuantity() >= quantity) {
-                promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
-                return;
-            }
-            promotionProducts.add(new Product(name, product.getPrice(), product.getQuantity(), product.getPromotion()));
-            products.add(new Product(name, product.getPrice(), quantity - product.getQuantity(), null));
+            if (product.getPromotion() == null) continue;
+
+            addPromotionProduct(name, quantity, product);
             return;
         }
+        addProduct(name, quantity, inputProducts);
+    }
+
+    private void addPromotionProduct(String name, int quantity, Product product) {
+        if (product.getQuantity() >= quantity) {
+            promotionProducts.add(new Product(name, product.getPrice(), quantity, product.getPromotion()));
+        } else {
+            promotionProducts.add(new Product(name, product.getPrice(), product.getQuantity(), product.getPromotion()));
+            products.add(new Product(name, product.getPrice(), quantity - product.getQuantity(), null));
+        }
+    }
+
+    private void addProduct(String name, int quantity, List<Product> inputProducts) {
         products.add(new Product(name, inputProducts.get(0).getPrice(), quantity, null));
     }
 
     private boolean hasProduct(String name, int quantity) {
         Product product = counter.findProduct(promotionProducts, name);
-        if (product != null) {
-            addPromotionProductQuantity(product, quantity);
-            return true;
+        if (product == null) {
+            product = counter.findProduct(products, name);
         }
-        product = counter.findProduct(products, name);
         if (product != null) {
-            product.setQuantity(product.getQuantity() + quantity);
+            updateProductQuantity(product, quantity);
             return true;
         }
         return false;
     }
 
-    private void addPromotionProductQuantity(Product product, int quantity) {
-        if (product.getQuantity() < quantity) {
-            int remainingQuantity = quantity - product.getQuantity();
-            product.setQuantity(product.getQuantity() + remainingQuantity);
+    private void updateProductQuantity(Product product, int quantity) {
+        int currentQuantity = product.getQuantity();
+        if (currentQuantity < quantity) {
+            int remainingQuantity = quantity - currentQuantity;
             addProductQuantity(product.getName(), remainingQuantity);
+            product.setQuantity(quantity);
+        } else {
+            product.setQuantity(currentQuantity + quantity);
         }
-        product.setQuantity(product.getQuantity() + quantity);
     }
 
     private void addProductQuantity(String name, int quantity) {

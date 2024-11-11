@@ -1,8 +1,8 @@
 package store.Service;
 
 public enum MemberShip {
-    STANDARD(0.3, 8000);
 
+    STANDARD(0.3, 8000);
     private final double discountPercentage;
     private final int maxDiscount;
 

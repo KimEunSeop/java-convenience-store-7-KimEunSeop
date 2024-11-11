@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static store.Application.NO;
+import static store.Application.YES;
+
 public class StoreController {
     private static final String PROMOTIONS_FILE_PATH = "src/main/resources/promotions.md";
     private static final String PRODUCTS_FILE_PATH = "src/main/resources/products.md";
@@ -99,10 +102,10 @@ public class StoreController {
 
     private boolean checkInput() {
         String answer = inputView.getResponse();
-        if ("Y".equalsIgnoreCase(answer)) {
+        if (YES.equalsIgnoreCase(answer)) {
             return true;
         }
-        if ("N".equalsIgnoreCase(answer)) {
+        if (NO.equalsIgnoreCase(answer)) {
             return false;
         }
         throw new IllegalArgumentException(ErrorMessage.INVALID_Y_OR_N_INPUT.getMessage());

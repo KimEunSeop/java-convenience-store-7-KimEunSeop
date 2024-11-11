@@ -13,10 +13,6 @@ public class ProductRepository {
         products.add(product);
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
     public List<Product> findByName(String name) {
         return products.stream()
                 .filter(p -> p.getName().equals(name))

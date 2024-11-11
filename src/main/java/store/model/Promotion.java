@@ -37,11 +37,4 @@ public class Promotion {
     public String getEndDate() {
         return endDate;
     }
-
-    public boolean isValid() {
-        LocalDate today = LocalDate.now();
-        LocalDate start = LocalDate.parse(this.startDate, DateTimeFormatter.ISO_DATE);
-        LocalDate end = LocalDate.parse(this.endDate, DateTimeFormatter.ISO_DATE);
-        return !(today.isBefore(start) || today.isAfter(end));
-    }
 }
