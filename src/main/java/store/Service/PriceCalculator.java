@@ -32,16 +32,14 @@ public class PriceCalculator {
             if (promotionProduct.getQuantity() % (buyCount + getCount) > buyCount) {
                 freeCount += ((promotionProduct.getQuantity() % (buyCount + getCount)) - buyCount);
             }
+
             promotionDiscount = freeCount * promotionProduct.getPrice();
         }
     }
 
     public void calculatemembershipDiscount(String input) {
         if ("Y".equalsIgnoreCase(input)) {
-            membershipDiscount = (int) ((totalPrice - promotionDiscount) * MEMBERSHIP_DISCOUNT_PERSENTAGE);
-            if (membershipDiscount > 8000) {
-                membershipDiscount = 8000;
-            }
+            calculatemembershipDiscount();
             return;
         }
         if ("N".equalsIgnoreCase(input)) {
@@ -49,6 +47,19 @@ public class PriceCalculator {
         }
         throw new IllegalArgumentException("[ERROR] 문자 Y나 N를 입력해야 합니다. 다시 입력해 주세요.");
 
+    }
+
+    private void calculatemembershipDiscount() {
+        int promotionPrice = 0;
+        for (Product promotionProduct : shoppingCart.getPromotionProducts()) {
+            int buyCount = promotionProduct.getPromotion().getBuyCount();
+            int getCount = promotionProduct.getPromotion().getGetCount();
+            promotionPrice += ((promotionProduct.getQuantity() / (buyCount + getCount)) * (buyCount + getCount)) * promotionProduct.getPrice();
+        }
+        membershipDiscount = (int) ((totalPrice - promotionPrice) * MEMBERSHIP_DISCOUNT_PERSENTAGE);
+        if (membershipDiscount > 8000) {
+            membershipDiscount = 8000;
+        }
     }
 
     public int getTotalPrice() {

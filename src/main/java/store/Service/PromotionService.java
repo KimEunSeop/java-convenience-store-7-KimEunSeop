@@ -78,18 +78,24 @@ public class PromotionService {
         }
         if (checkProduct.getQuantity() == quantityLimit) {
             int excludeQuantity = calculateExcludeQuantity(checkProduct);
+            if (excludeQuantity == 0) {
+                return;
+            }
             excludeItems.put(checkProduct.getName(), excludeQuantity);
         }
     }
 
     private int calculateExcludeQuantity(Product checkProduct) {
-        int excludePromotionProductQuality = checkProduct.getQuantity() % (checkProduct.getPromotion().getGetCount() + checkProduct.getPromotion().getBuyCount());
+        int totalExcludeQuantity = 0;
+        int buyCount = checkProduct.getPromotion().getBuyCount();
+        int getCount = checkProduct.getPromotion().getGetCount();
+        int excludePromotionProductQuality = checkProduct.getQuantity() % (buyCount + getCount);
         for (Product product : shoppingCart.getProducts()) {
             if (checkProduct.getName().equals(product.getName())) {
-                excludePromotionProductQuality += product.getQuantity();
+                totalExcludeQuantity = excludePromotionProductQuality + product.getQuantity();
             }
         }
-        return excludePromotionProductQuality;
+        return totalExcludeQuantity;
     }
 
     public void checkExcludeItemsResponse(String input) {

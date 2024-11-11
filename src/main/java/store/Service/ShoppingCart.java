@@ -54,30 +54,6 @@ public class ShoppingCart {
         products.add(new Product(name, inputProducts.get(0).getPrice(), quantity, null));
     }
 
-    public void changeProduct(String name, Integer exceedQuantity) {
-        int newPrice = 0;
-        for (Product product : promotionProducts) {
-            if (product.getName().equals(name)) {
-                product.setQuantity(product.getQuantity() - exceedQuantity);
-                newPrice = product.getPrice();
-                break;
-            }
-        }
-        promotionProducts = removeEmptyProducts(promotionProducts);
-        boolean isExist = false;
-        for (Product product : products) {
-            if (product.getName().equals(name)) {
-                product.setQuantity(product.getQuantity() + exceedQuantity);
-                isExist = true;
-                break;
-            }
-        }
-
-        if (!isExist) {
-            products.add(new Product(name, newPrice, exceedQuantity, null));
-        }
-    }
-
     public List<Product> removeEmptyProducts(List<Product> products) {
         List<Product> nonEmptyProducts = new ArrayList<>();
         for (Product product : products) {
@@ -103,15 +79,6 @@ public class ShoppingCart {
         return false;
     }
 
-    private Product findProduct(List<Product> productList, String name) {
-        for (Product product : productList) {
-            if (product.getName().equals(name)) {
-                return product;
-            }
-        }
-        return null;
-    }
-
     private void addPromotionProductQuantity(Product product, int quantity) {
         if (product.getQuantity() < quantity) {
             int remainingQuantity = quantity - product.getQuantity();
@@ -130,6 +97,15 @@ public class ShoppingCart {
         }
         Product product = productRepository.findByName(name).get(0);
         products.add(new Product(name, product.getPrice(), quantity, null));
+    }
+
+    private Product findProduct(List<Product> productList, String name) {
+        for (Product product : productList) {
+            if (product.getName().equals(name)) {
+                return product;
+            }
+        }
+        return null;
     }
 
     private void validateInputFormat(String item) {
